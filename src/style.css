@@ -1,0 +1,571 @@
+:root {
+  --fond: #0f1419;
+  --fond-2: #161d26;
+  --fond-3: #1e2733;
+  --bordure: #2a3644;
+  --texte: #e6edf3;
+  --texte-2: #9fb0c0;
+  --texte-3: #6b7f92;
+  --accent: #4a9eff;
+
+  --etat-gele: #7dd3fc;
+  --etat-neige: #e2e8f0;
+  --etat-degel: #c084fc;
+  --etat-sec: #fbbf24;
+  --etat-parfait: #22c55e;
+  --etat-humide: #84cc16;
+  --etat-gras: #f97316;
+  --etat-bourbier: #b45309;
+
+  --entete-h: 60px;
+  --panneau-w: 380px;
+  --rayon: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--fond);
+  color: var(--texte);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ----------------------------- En-tête ---------------------------- */
+
+.entete {
+  height: var(--entete-h);
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 20px;
+  background: var(--fond-2);
+  border-bottom: 1px solid var(--bordure);
+}
+
+.entete__titre {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+}
+
+.entete h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.entete__titre p {
+  margin: 0;
+  color: var(--texte-3);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entete__infos {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.horodatage {
+  color: var(--texte-3);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bouton-discret {
+  background: var(--fond-3);
+  border: 1px solid var(--bordure);
+  color: var(--texte-2);
+  border-radius: 6px;
+  padding: 5px 11px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.bouton-discret:hover {
+  color: var(--texte);
+  border-color: var(--accent);
+}
+
+/* ------------------------------ Grille ---------------------------- */
+
+.grille {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: var(--panneau-w) 1fr;
+  min-height: 0;
+}
+
+.panneau {
+  background: var(--fond-2);
+  border-right: 1px solid var(--bordure);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.filtres {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--bordure);
+  flex: 0 0 auto;
+}
+
+.champ {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.champ span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--texte-3);
+}
+
+.champ select {
+  background: var(--fond-3);
+  border: 1px solid var(--bordure);
+  color: var(--texte);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 13px;
+}
+
+/* --------------------------- Liste spots -------------------------- */
+
+.liste-spots {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.spot {
+  display: grid;
+  grid-template-columns: 4px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: var(--rayon);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.spot:hover {
+  background: var(--fond-3);
+}
+
+.spot--actif {
+  background: var(--fond-3);
+  border-color: var(--accent);
+}
+
+.spot__barre {
+  align-self: stretch;
+  border-radius: 2px;
+  min-height: 34px;
+}
+
+.spot__nom {
+  font-weight: 550;
+  font-size: 14px;
+}
+
+.spot__meta {
+  font-size: 12px;
+  color: var(--texte-3);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spot__etat {
+  text-align: right;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.spot__indice {
+  display: block;
+  font-size: 11px;
+  color: var(--texte-3);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------ Carte ----------------------------- */
+
+.zone-carte {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.carte {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.marqueur {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(15, 20, 25, 0.85);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+
+.marqueur:hover,
+.marqueur--actif {
+  transform: scale(1.45);
+  border-color: #fff;
+}
+
+/* ----------------------------- Détail ----------------------------- */
+
+.detail {
+  flex: 0 0 auto;
+  max-height: 58%;
+  overflow-y: auto;
+  background: var(--fond-2);
+  border-top: 1px solid var(--bordure);
+  padding: 16px 20px 20px;
+  position: relative;
+}
+
+.fermer {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--texte-3);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.fermer:hover {
+  color: var(--texte);
+}
+
+.detail h2 {
+  margin: 0 0 2px;
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.detail__meta {
+  color: var(--texte-3);
+  font-size: 13px;
+  margin: 0 0 14px;
+}
+
+.verdict {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 11px 14px;
+  border-radius: var(--rayon);
+  background: var(--fond-3);
+  border-left: 4px solid var(--texte-3);
+  margin-bottom: 16px;
+}
+
+.verdict__etat {
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.verdict__texte {
+  color: var(--texte-2);
+  font-size: 13.5px;
+}
+
+/* --------------------------- Frise 15 j --------------------------- */
+
+.frise {
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  gap: 3px;
+  margin-bottom: 6px;
+}
+
+.jour {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: default;
+  position: relative;
+}
+
+.jour--futur .jour__etat {
+  /* Les prévisions sont hachurées pour ne pas se confondre avec l'observé. */
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.16) 0 3px,
+    transparent 3px 7px
+  );
+}
+
+.jour--aujourdhui {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.jour__date {
+  font-size: 10px;
+  color: var(--texte-3);
+  text-align: center;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+}
+
+.jour__date strong {
+  display: block;
+  color: var(--texte-2);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.jour__pluie {
+  height: 34px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: var(--fond-3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.jour__pluie-barre {
+  width: 100%;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+  min-height: 0;
+}
+
+.jour__pluie-valeur {
+  font-size: 9.5px;
+  color: var(--texte-3);
+  text-align: center;
+  height: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.jour__etat {
+  height: 40px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 20, 25, 0.82);
+  font-variant-numeric: tabular-nums;
+}
+
+.frise-legende {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--texte-3);
+  margin-bottom: 18px;
+}
+
+/* ----------------------------- Fiches ----------------------------- */
+
+.fiches {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 12px;
+}
+
+.fiche {
+  background: var(--fond-3);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  padding: 12px 14px;
+}
+
+.fiche h3 {
+  margin: 0 0 9px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--texte-3);
+  font-weight: 600;
+}
+
+.fiche dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 10px;
+  font-size: 13px;
+}
+
+.fiche dt {
+  color: var(--texte-3);
+}
+
+.fiche dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.texture {
+  display: flex;
+  height: 9px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 4px 0 8px;
+}
+
+.texture span {
+  display: block;
+}
+
+.texture-legende {
+  display: flex;
+  gap: 12px;
+  font-size: 11.5px;
+  color: var(--texte-2);
+  flex-wrap: wrap;
+}
+
+.texture-legende i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 4px;
+  font-style: normal;
+}
+
+.note {
+  font-size: 12px;
+  color: var(--texte-3);
+  line-height: 1.55;
+  margin: 8px 0 0;
+}
+
+/* --------------------------- Chargement --------------------------- */
+
+.chargement {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--texte-3);
+  font-size: 13px;
+}
+
+.spinner {
+  width: 26px;
+  height: 26px;
+  margin: 0 auto 12px;
+  border: 2.5px solid var(--bordure);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: rotation 0.85s linear infinite;
+}
+
+@keyframes rotation {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.erreur {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #7f1d1d;
+  color: #fee2e2;
+  padding: 11px 18px;
+  border-radius: var(--rayon);
+  font-size: 13.5px;
+  max-width: 90vw;
+  z-index: 40;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ---------------------------- Responsive -------------------------- */
+
+@media (max-width: 900px) {
+  .grille {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 42%) minmax(0, 58%);
+  }
+
+  .panneau {
+    border-right: none;
+    border-bottom: 1px solid var(--bordure);
+  }
+
+  .detail {
+    max-height: 75%;
+  }
+
+  .entete__titre p,
+  /* Sous 900 px le titre et l'horodatage se chevauchent : on garde le titre. */
+  .horodatage {
+    display: none;
+  }
+
+  .frise {
+    /* Cinq colonnes par ligne : les 15 jours tiennent en trois rangées. */
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+  }
+}
+
+/* Le fond de carte IGN est clair : on assombrit les contrôles MapLibre. */
+.maplibregl-ctrl-group {
+  background: var(--fond-2);
+}
+
+.maplibregl-ctrl-group button + button {
+  border-top-color: var(--bordure);
+}
+
+.maplibregl-ctrl-attrib {
+  font-size: 10px;
+}

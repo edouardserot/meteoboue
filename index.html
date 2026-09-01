@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Météo Boue — état des sols VTT</title>
+    <meta
+      name="description"
+      content="Prévision de l'état des sols pour le VTT en Ariège et dans le piémont toulousain : 7 jours passés, 7 jours à venir, croisés avec la nature du sol."
+    />
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <header class="entete">
+      <div class="entete__titre">
+        <h1>Météo Boue</h1>
+        <p>État des sols VTT — Ariège &amp; piémont toulousain</p>
+      </div>
+      <div class="entete__infos">
+        <span id="horodatage" class="horodatage"></span>
+        <button id="rafraichir" class="bouton-discret" type="button" title="Recharger la météo">
+          Rafraîchir
+        </button>
+      </div>
+    </header>
+
+    <main class="grille">
+      <aside class="panneau" id="panneau">
+        <div class="filtres">
+          <label class="champ">
+            <span>Secteur</span>
+            <select id="filtre-zone">
+              <option value="">Tous</option>
+            </select>
+          </label>
+          <label class="champ">
+            <span>Trier par</span>
+            <select id="tri">
+              <option value="etat">État du sol</option>
+              <option value="nom">Nom</option>
+              <option value="altitude">Altitude</option>
+              <option value="distance">Distance de Toulouse</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="chargement" class="chargement">
+          <div class="spinner" aria-hidden="true"></div>
+          <p>Chargement de la météo…</p>
+        </div>
+
+        <ul id="liste-spots" class="liste-spots" hidden></ul>
+      </aside>
+
+      <div class="zone-carte">
+        <div id="carte" class="carte"></div>
+
+        <section id="detail" class="detail" hidden aria-live="polite">
+          <button id="fermer-detail" class="fermer" type="button" aria-label="Fermer">&times;</button>
+          <div id="detail-contenu"></div>
+        </section>
+      </div>
+    </main>
+
+    <div id="erreur" class="erreur" hidden></div>
+
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <script type="module" src="./src/js/app.js"></script>
+  </body>
+</html>

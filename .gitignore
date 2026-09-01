@@ -1,0 +1,19 @@
+# Systeme / editeurs
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.idea/
+.vscode/
+
+# Dependances (si un package.json arrive un jour)
+node_modules/
+npm-debug.log*
+
+# Fichiers de travail
+*.log
+_test-*.mjs
+
+# data/spots.enriched.json est volontairement versionne :
+# le site ne demarre pas sans, et le regenerer prend ~6 min
+# sur des API a quota.

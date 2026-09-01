@@ -1,0 +1,5 @@
+# Normalise les fins de ligne en LF dans le depot, quel que soit le poste.
+* text=auto eol=lf
+
+# Le JSON genere est du texte, mais on evite qu'il pollue les diffs.
+data/spots.enriched.json linguist-generated=true

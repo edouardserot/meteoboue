@@ -1,0 +1,29 @@
+{
+  "$comment": "Spots VTT — Ariege et piemont toulousain. lat/lon = point representatif de la zone de ride.",
+  "spots": [
+    { "id": "prat-dalbis",      "nom": "Prat d'Albis",              "zone": "Ariège",             "lat": 42.9200, "lon": 1.5480, "note": "Descentes depuis le plateau au-dessus de Foix" },
+    { "id": "pech-de-foix",     "nom": "Pech de Foix",              "zone": "Ariège",             "lat": 42.9310, "lon": 1.6000, "note": "Singles calcaires au-dessus de Foix" },
+    { "id": "plateau-de-beille","nom": "Plateau de Beille",         "zone": "Ariège",             "lat": 42.7264, "lon": 1.6006, "note": "Haute altitude, enneigé une bonne partie de l'hiver" },
+    { "id": "ax-3-domaines",    "nom": "Ax 3 Domaines",             "zone": "Ariège",             "lat": 42.7128, "lon": 1.8236, "note": "Bike park, pistes de station" },
+    { "id": "montsegur-tabe",   "nom": "Montségur / Montagne de Tabe","zone": "Ariège",           "lat": 42.8756, "lon": 1.8322, "note": "Massif de Tabe, terrain schisteux" },
+    { "id": "mas-dazil-arize",  "nom": "Massif de l'Arize",         "zone": "Ariège",             "lat": 43.0708, "lon": 1.3583, "note": "Autour du Mas-d'Azil, karst" },
+    { "id": "col-de-port",      "nom": "Col de Port / Massat",      "zone": "Ariège",             "lat": 42.8697, "lon": 1.4364, "note": "Cols et forêts du Couserans" },
+    { "id": "tarascon-quie",    "nom": "Tarascon / Quié",           "zone": "Ariège",             "lat": 42.8402, "lon": 1.6338, "note": "Versants est au-dessus de Tarascon, calcaire" },
+    { "id": "saint-girons",     "nom": "Saint-Girons / Couserans",  "zone": "Ariège",             "lat": 43.0015, "lon": 1.1215, "note": "Coteaux du Couserans, très arrosés" },
+    { "id": "guzet",            "nom": "Guzet",                     "zone": "Ariège",             "lat": 42.7783, "lon": 1.2942, "note": "Station, pistes de descente" },
+    { "id": "mirepoix-plantaurel","nom": "Mirepoix / Plantaurel",   "zone": "Ariège",             "lat": 43.0886, "lon": 1.8722, "note": "Chaînons du Plantaurel, molasse et marnes" },
+    { "id": "lavelanet-olmes",  "nom": "Lavelanet / Pays d'Olmes",  "zone": "Ariège",             "lat": 42.9331, "lon": 1.8514, "note": "Piémont du massif de Tabe" },
+    { "id": "pamiers-terrefort","nom": "Pamiers / Terrefort",       "zone": "Ariège",             "lat": 43.1167, "lon": 1.6111, "note": "Coteaux molassiques, terrain gras" },
+    { "id": "vicdessos-auzat",  "nom": "Vicdessos / Auzat",         "zone": "Ariège",             "lat": 42.7761, "lon": 1.4783, "note": "Haute vallée granitique" },
+    { "id": "roquefixade",      "nom": "Roquefixade",               "zone": "Ariège",             "lat": 42.9403, "lon": 1.7597, "note": "Crêtes et château, sentiers techniques" },
+    { "id": "bouconne",         "nom": "Forêt de Bouconne",         "zone": "Piémont toulousain", "lat": 43.6297, "lon": 1.1806, "note": "Le spot du dimanche, boucles forestières" },
+    { "id": "pech-david",       "nom": "Pech David",                "zone": "Piémont toulousain", "lat": 43.5461, "lon": 1.4364, "note": "Intra-muros Toulouse, coteaux argileux" },
+    { "id": "nailloux-lauragais","nom": "Nailloux / Lauragais",     "zone": "Piémont toulousain", "lat": 43.3517, "lon": 1.6236, "note": "Coteaux argilo-calcaires du Lauragais" },
+    { "id": "foret-de-buzet",   "nom": "Forêt de Buzet",            "zone": "Piémont toulousain", "lat": 43.7772, "lon": 1.6069, "note": "Forêt de plaine, terrasses alluviales du Tarn" },
+    { "id": "saint-ferreol",    "nom": "Saint-Ferréol / Revel",     "zone": "Piémont toulousain", "lat": 43.4392, "lon": 2.0250, "note": "Contreforts de la Montagne Noire" },
+    { "id": "arfons",           "nom": "Arfons / Montagne Noire",   "zone": "Piémont toulousain", "lat": 43.4406, "lon": 2.1633, "note": "Forêt domaniale, granite et arène" },
+    { "id": "auterive-ariege",  "nom": "Auterive / vallée de l'Ariège","zone": "Piémont toulousain","lat": 43.3486, "lon": 1.4778, "note": "Basses terrasses, graves" },
+    { "id": "verfeil-girou",    "nom": "Verfeil / coteaux du Girou","zone": "Piémont toulousain", "lat": 43.6558, "lon": 1.6547, "note": "Coteaux molassiques à l'est de Toulouse" },
+    { "id": "muret-ramee",      "nom": "Muret / Bois de la Ramée",  "zone": "Piémont toulousain", "lat": 43.4583, "lon": 1.3278, "note": "Bois de plaine en bord de Garonne" }
+  ]
+}
