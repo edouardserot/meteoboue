@@ -1,0 +1,21 @@
+# Site statique : rien a construire, la racine du depot est publiee telle quelle.
+[build]
+  publish = "."
+  command = ""
+
+# Le JSON des spots ne change qu'apres une passe d'enrichissement.
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# Le code du site, lui, doit pouvoir etre repousse sans attendre un cache.
+[[headers]]
+  for = "/src/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
