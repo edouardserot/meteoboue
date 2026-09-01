@@ -5,25 +5,37 @@
  *   spots.enriched.json (sol fige) + Open-Meteo (meteo du jour)
  *     -> bilan hydrique quotidien
  *     -> etat de sol par jour, sur 7 jours passes et 7 jours a venir.
+ *
+ * L'interface est organisee autour d'une seule question : « ou et quand ? ».
+ * D'ou la grille spots x jours plutot qu'une liste, et un jour actif qui
+ * recolore la carte et reordonne les spots.
  */
 
-import { bilanHydrique, delaiAvantSechage, cumulPluie } from './mud-model.js';
+import {
+  bilanHydrique,
+  delaiAvantSechage,
+  cumulPluie,
+  couleurEtat,
+  ETATS_ROULABLES,
+} from './mud-model.js';
 import { vitesseSechage } from './soil.js';
 import { meteoTousSpots, humiditeModele, JOURS_PASSES, JOURS_FUTURS } from './weather.js';
 
 const TOULOUSE = { lat: 43.6045, lon: 1.4442 };
-
 const COULEURS_TEXTURE = { argile: '#9a3412', limon: '#ca8a04', sable: '#fcd34d' };
 
-/** Etats consideres comme roulables, du plus au moins agreable. */
-const ORDRE_ETATS = ['parfait', 'humide', 'sec', 'gele', 'neige', 'gras', 'degel', 'bourbier'];
+/** Detour routier moyen par rapport a la distance a vol d'oiseau. */
+const FACTEUR_ROUTE = 1.3;
+/** Vitesse moyenne retenue pour estimer un temps de trajet, en km/h. */
+const VITESSE_MOYENNE = 68;
 
 const el = (id) => document.getElementById(id);
 
 const etat = {
   spots: [],
-  bilans: new Map(), // id -> jours[]
-  indexAujourdhui: new Map(), // id -> index du jour courant dans jours[]
+  jours: new Map(), // id -> bilan journalier complet
+  idxAuj: 0, // index d'aujourd'hui dans les series
+  jourActif: 0, // index du jour selectionne
   selection: null,
   marqueurs: new Map(),
   carte: null,
@@ -50,20 +62,20 @@ async function demarrer() {
   etat.spots = spots;
 
   initialiserCarte();
-  remplirFiltreZones(spots);
 
   const meteo = await meteoTousSpots(spots);
   calculerBilans(spots, meteo);
+  etat.jourActif = etat.idxAuj;
 
-  el('chargement').hidden = true;
-  el('liste-spots').hidden = false;
-  el('horodatage').textContent = `Sol : relevé ${formaterDateCourte(genere)} · météo à l’instant`;
+  el('chargement').remove();
+  el('horodatage').textContent = `Sol : relevé ${formaterDateCourte(genere)}`;
 
-  dessinerListe();
+  dessinerTableau();
   dessinerMarqueurs();
+  dessinerVerdict();
 
-  el('filtre-zone').addEventListener('change', dessinerListe);
-  el('tri').addEventListener('change', dessinerListe);
+  el('filtre-distance').addEventListener('change', rafraichirVues);
+  el('tri').addEventListener('change', rafraichirVues);
   el('fermer-detail').addEventListener('click', fermerDetail);
   el('rafraichir').addEventListener('click', () => {
     localStorage.removeItem('meteoboue.meteo.v2');
@@ -78,14 +90,191 @@ function calculerBilans(spots, meteo) {
     const donnees = meteo.get(spot.id);
     if (!donnees?.daily) continue;
 
-    const jours = bilanHydrique(donnees.daily, spot.hydro);
-    let index = donnees.daily.time.indexOf(aujourdhui);
-    // Filet de securite si le fuseau de l'API et celui du navigateur divergent.
-    if (index === -1) index = Math.max(0, jours.length - JOURS_FUTURS - 1);
+    etat.jours.set(spot.id, bilanHydrique(donnees.daily, spot.hydro));
 
-    etat.bilans.set(spot.id, jours);
-    etat.indexAujourdhui.set(spot.id, index);
+    // Toutes les series viennent du meme appel : l'axe des dates est commun.
+    if (!etat.dates) {
+      etat.dates = donnees.daily.time;
+      const trouve = etat.dates.indexOf(aujourdhui);
+      // Filet de securite si le fuseau de l'API et celui du navigateur divergent.
+      etat.idxAuj = trouve === -1 ? etat.dates.length - JOURS_FUTURS - 1 : trouve;
+    }
   }
+}
+
+/** Les 15 index affiches : 7 jours passes, aujourd'hui, 7 a venir. */
+function fenetre() {
+  const debut = Math.max(0, etat.idxAuj - JOURS_PASSES);
+  const fin = Math.min((etat.dates?.length ?? 0) - 1, etat.idxAuj + JOURS_FUTURS);
+  const index = [];
+  for (let i = debut; i <= fin; i++) index.push(i);
+  return index;
+}
+
+function rafraichirVues() {
+  dessinerTableau();
+  majMarqueurs();
+  dessinerVerdict();
+}
+
+/* ------------------------------------------------------------------ */
+/* Selection des spots affiches                                        */
+/* ------------------------------------------------------------------ */
+
+function spotsAffiches() {
+  const distanceMax = Number(el('filtre-distance').value) || Infinity;
+  const tri = el('tri').value;
+
+  const liste = etat.spots.filter(
+    (s) => etat.jours.has(s.id) && distanceVol(s) <= distanceMax
+  );
+
+  liste.sort((a, b) => {
+    switch (tri) {
+      case 'nom':
+        return a.nom.localeCompare(b.nom, 'fr');
+      case 'altitude':
+        return (b.altitude ?? 0) - (a.altitude ?? 0);
+      case 'distance':
+        return distanceVol(a) - distanceVol(b);
+      default: {
+        // Meilleur le jour choisi, puis le plus proche a qualite egale.
+        const ecart = jourDe(b.id).etat.roulabilite - jourDe(a.id).etat.roulabilite;
+        return ecart !== 0 ? ecart : distanceVol(a) - distanceVol(b);
+      }
+    }
+  });
+
+  return liste;
+}
+
+/* ------------------------------------------------------------------ */
+/* Bandeau de verdict                                                  */
+/* ------------------------------------------------------------------ */
+
+function dessinerVerdict() {
+  const boite = el('verdict-jour');
+  const liste = spotsAffiches();
+  boite.hidden = false;
+
+  if (!liste.length) {
+    boite.innerHTML = `<p class="verdict-jour__texte">Aucun spot dans ce rayon.</p>`;
+    return;
+  }
+
+  const roulables = liste.filter((s) => ETATS_ROULABLES.includes(jourDe(s.id).etat.cle));
+  const aEviter = liste.filter((s) => jourDe(s.id).etat.roulabilite < 40);
+  const quand = nomJour(etat.jourActif);
+
+  let phrase;
+  if (!roulables.length) {
+    const moinsPire = liste[0];
+    phrase =
+      `Rien de vraiment roulant ${quand}. Le moins mauvais : ` +
+      `<strong>${echapper(moinsPire.nom)}</strong> (${trajet(moinsPire)}, ` +
+      `${jourDe(moinsPire.id).etat.label.toLowerCase()}).`;
+  } else {
+    // Le plus proche qui roule est presque toujours le choix pratique.
+    const proche = [...roulables].sort((a, b) => distanceVol(a) - distanceVol(b))[0];
+    phrase =
+      `<strong>${roulables.length} spots sur ${liste.length}</strong> sont roulants ${quand}. ` +
+      `Le plus proche : <strong>${echapper(proche.nom)}</strong> (${trajet(proche)}, ` +
+      `${jourDe(proche.id).etat.label.toLowerCase()}).`;
+    if (aEviter.length) {
+      const noms = aEviter.slice(0, 3).map((s) => echapper(s.nom)).join(', ');
+      phrase += ` À éviter : ${noms}${aEviter.length > 3 ? '…' : ''}.`;
+    }
+  }
+
+  const couleur = couleurEtat(jourDe(liste[0].id).etat);
+  boite.innerHTML = `
+    <span class="verdict-jour__pastille" style="background:${couleur}"></span>
+    <p class="verdict-jour__texte">${phrase}</p>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* Grille spots x jours                                                */
+/* ------------------------------------------------------------------ */
+
+function dessinerTableau() {
+  const conteneur = el('tableau');
+  const index = fenetre();
+  const liste = spotsAffiches();
+
+  conteneur.style.setProperty('--nb-jours', index.length);
+  conteneur.replaceChildren();
+
+  // --- En-tete : les colonnes de jours servent de selecteur ---
+  const entete = document.createElement('div');
+  entete.className = 'tab__ligne tab__ligne--entete';
+  entete.append(cellule('div', 'tab__coin', 'Spot'));
+
+  for (const i of index) {
+    const date = new Date(`${etat.dates[i]}T12:00:00`);
+    const bouton = document.createElement('button');
+    bouton.type = 'button';
+    bouton.className =
+      'tab__jour' +
+      (i === etat.jourActif ? ' tab__jour--actif' : '') +
+      (i === etat.idxAuj ? ' tab__jour--aujourdhui' : '') +
+      (i > etat.idxAuj ? ' tab__jour--futur' : '');
+    bouton.innerHTML =
+      `<span>${date.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}</span>` +
+      `<strong>${date.getDate()}</strong>`;
+    bouton.title = `Voir ${nomJour(i)}`;
+    bouton.addEventListener('click', () => choisirJour(i));
+    entete.append(bouton);
+  }
+  conteneur.append(entete);
+
+  // --- Une ligne par spot ---
+  const corps = document.createElement('div');
+  corps.className = 'tab__corps';
+
+  for (const spot of liste) {
+    const ligne = document.createElement('div');
+    ligne.className = 'tab__ligne' + (spot.id === etat.selection ? ' tab__ligne--active' : '');
+
+    const label = document.createElement('button');
+    label.type = 'button';
+    label.className = 'tab__label';
+    label.innerHTML =
+      `<span class="tab__nom">${echapper(spot.nom)}</span>` +
+      `<span class="tab__meta">${trajet(spot)} · ${spot.altitude ?? '?'} m</span>`;
+    label.addEventListener('click', () => selectionner(spot.id, { recentrer: true }));
+    ligne.append(label);
+
+    const jours = etat.jours.get(spot.id);
+    for (const i of index) {
+      const j = jours[i];
+      const c = document.createElement('button');
+      c.type = 'button';
+      c.className =
+        'tab__cellule' +
+        (i === etat.jourActif ? ' tab__cellule--colonne' : '') +
+        (i > etat.idxAuj ? ' tab__cellule--futur' : '');
+      c.style.background = couleurEtat(j.etat);
+      c.title = `${spot.nom} — ${nomJour(i)} : ${j.etat.label}${j.pluie >= 0.5 ? `, ${j.pluie} mm de pluie` : ''}`;
+      if (j.etat.glyphe) {
+        c.innerHTML = `<span class="tab__glyphe">${j.etat.glyphe}</span>`;
+      }
+      c.addEventListener('click', () => {
+        choisirJour(i);
+        selectionner(spot.id, { recentrer: true });
+      });
+      ligne.append(c);
+    }
+
+    corps.append(ligne);
+  }
+
+  conteneur.append(corps);
+}
+
+function choisirJour(i) {
+  etat.jourActif = i;
+  rafraichirVues();
+  if (etat.selection) dessinerDetail(etat.spots.find((s) => s.id === etat.selection));
 }
 
 /* ------------------------------------------------------------------ */
@@ -112,7 +301,7 @@ function initialiserCarte() {
       layers: [{ id: 'ign', type: 'raster', source: 'ign' }],
     },
     center: [1.55, 43.25],
-    zoom: 7.7,
+    zoom: 7.6,
   });
 
   etat.carte.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
@@ -121,13 +310,10 @@ function initialiserCarte() {
 
 function dessinerMarqueurs() {
   for (const spot of etat.spots) {
-    const jour = jourCourant(spot.id);
-    if (!jour) continue;
+    if (!etat.jours.has(spot.id)) continue;
 
     const noeud = document.createElement('div');
     noeud.className = 'marqueur';
-    noeud.style.background = jour.etat.couleur;
-    noeud.title = `${spot.nom} — ${jour.etat.label}`;
     noeud.addEventListener('click', (e) => {
       e.stopPropagation();
       selectionner(spot.id, { recentrer: false });
@@ -136,69 +322,20 @@ function dessinerMarqueurs() {
     new maplibregl.Marker({ element: noeud }).setLngLat([spot.lon, spot.lat]).addTo(etat.carte);
     etat.marqueurs.set(spot.id, noeud);
   }
+  majMarqueurs();
 }
 
-/* ------------------------------------------------------------------ */
-/* Liste                                                               */
-/* ------------------------------------------------------------------ */
+/** Recolore la carte pour le jour actif, et masque les spots filtres. */
+function majMarqueurs() {
+  const visibles = new Set(spotsAffiches().map((s) => s.id));
 
-function remplirFiltreZones(spots) {
-  const zones = [...new Set(spots.map((s) => s.zone))].sort();
-  const select = el('filtre-zone');
-  for (const zone of zones) {
-    const option = document.createElement('option');
-    option.value = zone;
-    option.textContent = zone;
-    select.append(option);
-  }
-}
-
-function dessinerListe() {
-  const zone = el('filtre-zone').value;
-  const tri = el('tri').value;
-
-  let liste = etat.spots.filter((s) => etat.bilans.has(s.id));
-  if (zone) liste = liste.filter((s) => s.zone === zone);
-
-  liste.sort((a, b) => {
-    switch (tri) {
-      case 'nom':
-        return a.nom.localeCompare(b.nom, 'fr');
-      case 'altitude':
-        return (b.altitude ?? 0) - (a.altitude ?? 0);
-      case 'distance':
-        return distanceToulouse(a) - distanceToulouse(b);
-      default: {
-        const rangA = ORDRE_ETATS.indexOf(jourCourant(a.id).etat.cle);
-        const rangB = ORDRE_ETATS.indexOf(jourCourant(b.id).etat.cle);
-        if (rangA !== rangB) return rangA - rangB;
-        return jourCourant(a.id).indice - jourCourant(b.id).indice;
-      }
-    }
-  });
-
-  const ul = el('liste-spots');
-  ul.replaceChildren();
-
-  for (const spot of liste) {
-    const jour = jourCourant(spot.id);
-    const li = document.createElement('li');
-    li.className = 'spot' + (spot.id === etat.selection ? ' spot--actif' : '');
-    li.dataset.id = spot.id;
-
-    li.innerHTML = `
-      <div class="spot__barre" style="background:${jour.etat.couleur}"></div>
-      <div>
-        <div class="spot__nom">${echapper(spot.nom)}</div>
-        <div class="spot__meta">${spot.altitude ?? '?'} m · ${echapper(spot.hydro.texture)} · ${Math.round(distanceToulouse(spot))} km</div>
-      </div>
-      <div class="spot__etat" style="color:${jour.etat.couleur}">
-        ${jour.etat.court}
-        <span class="spot__indice">indice ${jour.indice}</span>
-      </div>`;
-
-    li.addEventListener('click', () => selectionner(spot.id, { recentrer: true }));
-    ul.append(li);
+  for (const [id, noeud] of etat.marqueurs) {
+    const j = jourDe(id);
+    noeud.style.background = couleurEtat(j.etat);
+    noeud.textContent = j.etat.glyphe ?? '';
+    noeud.title = `${etat.spots.find((s) => s.id === id).nom} — ${j.etat.label}`;
+    noeud.classList.toggle('marqueur--estompe', !visibles.has(id));
+    noeud.classList.toggle('marqueur--actif', id === etat.selection);
   }
 }
 
@@ -208,11 +345,8 @@ function dessinerListe() {
 
 function selectionner(id, { recentrer }) {
   etat.selection = id;
-  dessinerListe();
-
-  for (const [autreId, noeud] of etat.marqueurs) {
-    noeud.classList.toggle('marqueur--actif', autreId === id);
-  }
+  dessinerTableau();
+  majMarqueurs();
 
   const spot = etat.spots.find((s) => s.id === id);
   if (recentrer) {
@@ -227,34 +361,30 @@ function selectionner(id, { recentrer }) {
 function fermerDetail() {
   etat.selection = null;
   el('detail').hidden = true;
-  for (const noeud of etat.marqueurs.values()) noeud.classList.remove('marqueur--actif');
-  dessinerListe();
+  dessinerTableau();
+  majMarqueurs();
 }
 
 function dessinerDetail(spot) {
-  const jours = etat.bilans.get(spot.id);
-  const idx = etat.indexAujourdhui.get(spot.id);
+  const jours = etat.jours.get(spot.id);
+  const idx = etat.jourActif;
   const jour = jours[idx];
+  const index = fenetre();
+  const pluieMax = Math.max(6, ...index.map((i) => jours[i].pluie + jours[i].neige));
 
-  const debut = Math.max(0, idx - JOURS_PASSES);
-  const fin = Math.min(jours.length, idx + JOURS_FUTURS + 1);
-  const fenetre = jours.slice(debut, fin);
-  const pluieMax = Math.max(6, ...fenetre.map((j) => j.pluie + j.neige));
-
-  const cellules = fenetre
-    .map((j, i) => {
-      const position = debut + i;
-      const classes = [
-        'jour',
-        position > idx ? 'jour--futur' : '',
-        position === idx ? 'jour--aujourdhui' : '',
-      ]
-        .filter(Boolean)
-        .join(' ');
-
+  const colonnes = index
+    .map((i) => {
+      const j = jours[i];
       const precip = j.pluie + j.neige;
       const hauteur = precip > 0 ? Math.max(3, (precip / pluieMax) * 100) : 0;
       const date = new Date(`${j.date}T12:00:00`);
+      const classes = [
+        'jour',
+        i > etat.idxAuj ? 'jour--futur' : '',
+        i === etat.jourActif ? 'jour--actif' : '',
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return `
         <div class="${classes}" title="${echapper(infobulle(j))}">
@@ -262,11 +392,9 @@ function dessinerDetail(spot) {
             ${date.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
             <strong>${date.getDate()}</strong>
           </div>
-          <div class="jour__pluie">
-            <div class="jour__pluie-barre" style="height:${hauteur}%"></div>
-          </div>
+          <div class="jour__pluie"><div class="jour__pluie-barre" style="height:${hauteur}%"></div></div>
           <div class="jour__pluie-valeur">${precip >= 0.5 ? precip.toFixed(0) : ''}</div>
-          <div class="jour__etat" style="background:${j.etat.couleur}">${j.indice}</div>
+          <div class="jour__etat" style="background:${couleurEtat(j.etat)}">${j.etat.glyphe ?? ''}</div>
         </div>`;
     })
     .join('');
@@ -277,20 +405,21 @@ function dessinerDetail(spot) {
   el('detail-contenu').innerHTML = `
     <h2>${echapper(spot.nom)}</h2>
     <p class="detail__meta">
-      ${echapper(spot.zone)} · ${spot.altitude ?? '?'} m · pente ${spot.pentePct ?? '?'} %
-      · versant ${cardinal(spot.exposition)} · ${Math.round(distanceToulouse(spot))} km de Toulouse
+      ${echapper(spot.zone)} · ${trajet(spot)} · ${spot.altitude ?? '?'} m
+      · pente ${spot.pentePct ?? '?'} % · versant ${cardinal(spot.exposition)}
     </p>
 
-    <div class="verdict" style="border-left-color:${jour.etat.couleur}">
-      <span class="verdict__etat" style="color:${jour.etat.couleur}">${jour.etat.label}</span>
+    <div class="verdict" style="border-left-color:${couleurEtat(jour.etat)}">
+      <span class="verdict__quand">${majuscule(nomJour(idx))}</span>
+      <span class="verdict__etat" style="color:${couleurEtat(jour.etat)}">${jour.etat.label}</span>
       <span class="verdict__texte">${echapper(conseil(jours, idx))}</span>
     </div>
 
-    <div class="frise">${cellules}</div>
+    <div class="frise">${colonnes}</div>
     <div class="frise-legende">
       <span>← 7 jours passés (observé)</span>
-      <span>barres : précipitations mm · pastille : indice de boue 0-100</span>
-      <span>aujourd’hui encadré · 7 jours à venir (prévu, hachuré) →</span>
+      <span>barres bleues : précipitations en mm</span>
+      <span>7 jours à venir (prévu, hachuré) →</span>
     </div>
 
     <div class="fiches">
@@ -313,13 +442,13 @@ function dessinerDetail(spot) {
       </div>
 
       <div class="fiche">
-        <h3>Bilan hydrique aujourd’hui</h3>
+        <h3>Bilan hydrique</h3>
         <dl>
+          <dt>Saturation</dt><dd>${Math.round(jour.humidite * 100)} %</dd>
           <dt>Réserve du sol</dt><dd>${jour.stock} mm</dd>
           <dt>Capacité au champ</dt><dd>${h.stockFc.toFixed(0)} mm</dd>
-          <dt>Saturation</dt><dd>${Math.round(jour.humidite * 100)} %</dd>
-          <dt>Pluie 7 j. passés</dt><dd>${cumulPluie(jours, idx - 1, JOURS_PASSES)} mm</dd>
-          <dt>Pluie 7 j. à venir</dt><dd>${cumulPluieFuture(jours, idx)} mm</dd>
+          <dt>Pluie 7 j. passés</dt><dd>${cumulPluie(jours, etat.idxAuj - 1, JOURS_PASSES)} mm</dd>
+          <dt>Pluie 7 j. à venir</dt><dd>${cumulPluieFuture(jours)} mm</dd>
           ${jour.manteauNeigeux > 1 ? `<dt>Manteau neigeux</dt><dd>${jour.manteauNeigeux} mm eq.</dd>` : ''}
         </dl>
       </div>
@@ -327,16 +456,16 @@ function dessinerDetail(spot) {
       <div class="fiche">
         <h3>Paramètres du modèle</h3>
         <dl>
+          <dt>Indice de boue</dt><dd>${jour.indice} / 100</dd>
           <dt>Drainage / jour</dt><dd>${(h.drainage * 100).toFixed(0)} %</dd>
           <dt>Ruissellement</dt><dd>${(h.ruissellementBase * 100).toFixed(0)} %</dd>
           <dt>Effet d’exposition</dt><dd>×${h.kcExposition.toFixed(2)}</dd>
-          <dt>Réservoir 0-15 cm</dt><dd>${h.stockWp.toFixed(0)}–${h.stockSat.toFixed(0)} mm</dd>
         </dl>
         <p class="note" id="signal-modele">Signal modèle Open-Meteo : chargement…</p>
       </div>
     </div>`;
 
-  chargerSignalModele(spot, jours, idx);
+  chargerSignalModele(spot, jours);
 }
 
 /**
@@ -344,11 +473,10 @@ function dessinerDetail(spot) {
  * C'est un controle de coherence sur la dynamique, pas une verite terrain :
  * le modele meteo ignore le sol local.
  */
-async function chargerSignalModele(spot, jours, idx) {
+async function chargerSignalModele(spot, jours) {
   const cible = el('signal-modele');
   try {
     const parJour = await humiditeModele(spot);
-    // La carte peut avoir change de spot pendant la requete.
     if (etat.selection !== spot.id || !cible.isConnected) return;
     if (!parJour) {
       cible.textContent = 'Signal modèle Open-Meteo : indisponible.';
@@ -356,7 +484,7 @@ async function chargerSignalModele(spot, jours, idx) {
     }
 
     const valeurs = jours
-      .slice(Math.max(0, idx - JOURS_PASSES), idx + 1)
+      .slice(Math.max(0, etat.idxAuj - JOURS_PASSES), etat.idxAuj + 1)
       .map((j) => parJour[j.date])
       .filter(Number.isFinite);
 
@@ -385,12 +513,12 @@ async function chargerSignalModele(spot, jours, idx) {
 function conseil(jours, idx) {
   const jour = jours[idx];
   const delai = delaiAvantSechage(jours, idx);
-  const pluieAVenir = cumulPluieFuture(jours, idx);
+  const pluieAVenir = cumulPluieFuture(jours);
 
   if (jour.etat.cle === 'neige') return 'Sentiers sous la neige — plutôt raquettes que VTT.';
-  if (jour.etat.cle === 'gele') return 'Sol gelé, donc dur et roulant. Attention au verglas en dévers.';
+  if (jour.etat.cle === 'gele') return 'Sol dur et roulant. Attention au verglas en dévers.';
   if (jour.etat.cle === 'degel')
-    return 'Sol en dégel : c’est le moment où l’on abîme le plus les sentiers. À éviter.';
+    return 'C’est le moment où l’on abîme le plus les sentiers. À éviter.';
 
   if (delai === 0) {
     const degradation = jours
@@ -405,31 +533,27 @@ function conseil(jours, idx) {
   }
 
   if (delai === null) {
-    return `Gras, et ça ne ressuie pas sur la fenêtre de prévision (${pluieAVenir} mm à venir).`;
+    return `Ça ne ressuie pas sur la fenêtre de prévision (${pluieAVenir} mm à venir).`;
   }
   return delai === 1
-    ? 'Encore gras aujourd’hui, ça devrait être bon dès demain.'
-    : `Encore gras. Compter ${delai} jours avant que ça redevienne roulant.`;
+    ? 'Ça devrait être bon dès le lendemain.'
+    : `Compter ${delai} jours avant que ça redevienne roulant.`;
 }
 
-function cumulPluieFuture(jours, idx) {
+function cumulPluieFuture(jours) {
   let total = 0;
-  for (let i = idx + 1; i <= Math.min(jours.length - 1, idx + JOURS_FUTURS); i++) {
+  for (let i = etat.idxAuj + 1; i <= Math.min(jours.length - 1, etat.idxAuj + JOURS_FUTURS); i++) {
     total += jours[i].pluie + jours[i].neige;
   }
   return Math.round(total * 10) / 10;
 }
 
 function infobulle(j) {
-  const morceaux = [
-    j.date,
-    j.etat.label,
-    `indice ${j.indice}`,
-    `réserve ${j.stock} mm`,
-    `pluie ${j.pluie} mm`,
-  ];
+  const morceaux = [j.date, j.etat.label, `indice ${j.indice}`, `pluie ${j.pluie} mm`];
   if (j.neige > 0) morceaux.push(`neige ${j.neige} cm`);
-  if (j.tmin !== null && j.tmax !== null) morceaux.push(`${Math.round(j.tmin)}/${Math.round(j.tmax)} °C`);
+  if (j.tmin !== null && j.tmax !== null) {
+    morceaux.push(`${Math.round(j.tmin)}/${Math.round(j.tmax)} °C`);
+  }
   return morceaux.join(' · ');
 }
 
@@ -437,13 +561,53 @@ function infobulle(j) {
 /* Utilitaires                                                         */
 /* ------------------------------------------------------------------ */
 
-function jourCourant(id) {
-  const jours = etat.bilans.get(id);
-  if (!jours) return null;
-  return jours[etat.indexAujourdhui.get(id)];
+/** Etat d'un spot le jour actif. */
+function jourDe(id) {
+  return etat.jours.get(id)[etat.jourActif];
 }
 
-/** Date du jour dans le fuseau de Paris, au format ISO court. */
+/** Nom relatif d'un jour : « aujourd'hui », « demain », « samedi 5 »… */
+function nomJour(i) {
+  const ecart = i - etat.idxAuj;
+  const relatifs = { '-2': 'avant-hier', '-1': 'hier', 0: 'aujourd’hui', 1: 'demain', 2: 'après-demain' };
+  if (relatifs[ecart]) return relatifs[ecart];
+
+  const date = new Date(`${etat.dates[i]}T12:00:00`);
+  const jour = date.toLocaleDateString('fr-FR', { weekday: 'long' });
+  return `${ecart < 0 ? `${jour} dernier` : jour} ${date.getDate()}`;
+}
+
+/** Distance a vol d'oiseau depuis Toulouse, en km. */
+function distanceVol(spot) {
+  const R = 6371;
+  const dLat = ((spot.lat - TOULOUSE.lat) * Math.PI) / 180;
+  const dLon = ((spot.lon - TOULOUSE.lon) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((TOULOUSE.lat * Math.PI) / 180) *
+      Math.cos((spot.lat * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+/**
+ * Estimation de trajet depuis Toulouse. Volontairement grossiere : elle part
+ * de la distance a vol d'oiseau, sans calcul d'itineraire.
+ */
+function trajet(spot) {
+  const km = distanceVol(spot);
+  const minutes = Math.round(((km * FACTEUR_ROUTE) / VITESSE_MOYENNE) * 60 + 8);
+  const duree = minutes >= 60 ? `${Math.floor(minutes / 60)} h ${String(minutes % 60).padStart(2, '0')}` : `${minutes} min`;
+  return `~${duree}`;
+}
+
+const POINTS_CARDINAUX = ['nord', 'nord-est', 'est', 'sud-est', 'sud', 'sud-ouest', 'ouest', 'nord-ouest'];
+
+function cardinal(azimut) {
+  if (azimut === null || !Number.isFinite(azimut)) return 'plat';
+  return POINTS_CARDINAUX[Math.round(azimut / 45) % 8];
+}
+
 function dateDuJour() {
   return new Intl.DateTimeFormat('fr-CA', {
     timeZone: 'Europe/Paris',
@@ -458,23 +622,15 @@ function formaterDateCourte(iso) {
   return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
 }
 
-function distanceToulouse(spot) {
-  const R = 6371;
-  const dLat = ((spot.lat - TOULOUSE.lat) * Math.PI) / 180;
-  const dLon = ((spot.lon - TOULOUSE.lon) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((TOULOUSE.lat * Math.PI) / 180) *
-      Math.cos((spot.lat * Math.PI) / 180) *
-      Math.sin(dLon / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(a));
+function cellule(balise, classe, texte) {
+  const n = document.createElement(balise);
+  n.className = classe;
+  n.textContent = texte;
+  return n;
 }
 
-const POINTS_CARDINAUX = ['nord', 'nord-est', 'est', 'sud-est', 'sud', 'sud-ouest', 'ouest', 'nord-ouest'];
-
-function cardinal(azimut) {
-  if (azimut === null || !Number.isFinite(azimut)) return 'plat';
-  return POINTS_CARDINAUX[Math.round(azimut / 45) % 8];
+function majuscule(t) {
+  return t.charAt(0).toUpperCase() + t.slice(1);
 }
 
 function echapper(texte) {

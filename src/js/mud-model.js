@@ -16,16 +16,65 @@ const KC_BASE = 0.85;
 /** Open-Meteo convertit l'equivalent en eau en hauteur de neige au ratio 1:7. */
 const RATIO_NEIGE = 0.7;
 
+/**
+ * Les etats du sol.
+ *
+ * `roulabilite` (0-100) est le SEUL axe porte par la couleur : « est-ce que
+ * j'y vais ? ». L'humidite, elle, n'est plus codee par la teinte — un sol
+ * gele et un sol sec roulent tous les deux bien, et melanger les deux
+ * grandeurs obligeait a memoriser une legende de huit entrees.
+ *
+ * `glyphe` ne porte que la CAUSE, et seulement quand elle est inattendue :
+ * l'eau etant l'explication par defaut, elle n'a pas de pictogramme.
+ */
 export const ETATS = {
-  gele:     { cle: 'gele',     label: 'Sol gelé',            court: 'Gelé',      couleur: '#7dd3fc', roulabilite: 'bon' },
-  neige:    { cle: 'neige',    label: 'Enneigé',             court: 'Neige',     couleur: '#e2e8f0', roulabilite: 'variable' },
-  degel:    { cle: 'degel',    label: 'Dégel — sol fragile', court: 'Dégel',     couleur: '#c084fc', roulabilite: 'mauvais' },
-  sec:      { cle: 'sec',      label: 'Sec, poussiéreux',    court: 'Sec',       couleur: '#fbbf24', roulabilite: 'bon' },
-  parfait:  { cle: 'parfait',  label: 'Parfait',             court: 'Parfait',   couleur: '#22c55e', roulabilite: 'excellent' },
-  humide:   { cle: 'humide',   label: 'Humide mais roulant', court: 'Humide',    couleur: '#84cc16', roulabilite: 'bon' },
-  gras:     { cle: 'gras',     label: 'Gras par endroits',   court: 'Gras',      couleur: '#f97316', roulabilite: 'moyen' },
-  bourbier: { cle: 'bourbier', label: 'Bourbier',            court: 'Bourbier',  couleur: '#b45309', roulabilite: 'mauvais' },
+  parfait:  { cle: 'parfait',  label: 'Grip parfait',            court: 'Parfait',  roulabilite: 100, glyphe: null },
+  humide:   { cle: 'humide',   label: 'Humide, ça tient',        court: 'Humide',   roulabilite: 82,  glyphe: null },
+  gele:     { cle: 'gele',     label: 'Sol gelé, dur et roulant', court: 'Gelé',    roulabilite: 72,  glyphe: '❄' },
+  sec:      { cle: 'sec',      label: 'Sec et dur',              court: 'Sec',      roulabilite: 68,  glyphe: null },
+  gras:     { cle: 'gras',     label: 'Ça colle aux pneus',      court: 'Gras',     roulabilite: 38,  glyphe: null },
+  neige:    { cle: 'neige',    label: 'Sous la neige',           court: 'Neige',    roulabilite: 28,  glyphe: '❄' },
+  degel:    { cle: 'degel',    label: 'Dégel, sentiers fragiles', court: 'Dégel',   roulabilite: 15,  glyphe: '❄' },
+  bourbier: { cle: 'bourbier', label: 'Bourbier',                court: 'Bourbier', roulabilite: 5,   glyphe: null },
 };
+
+/** Etats sur lesquels on part rouler sans y penser. */
+export const ETATS_ROULABLES = ['parfait', 'humide', 'sec', 'gele'];
+
+/**
+ * Rampe rouge -> vert. Un seul degrade continu, donc rien a apprendre :
+ * plus c'est vert, plus on y va.
+ */
+const RAMPE = [
+  { p: 0, c: [136, 19, 19] },
+  { p: 25, c: [214, 40, 40] },
+  { p: 45, c: [234, 108, 26] },
+  { p: 62, c: [222, 173, 20] },
+  { p: 80, c: [124, 191, 32] },
+  { p: 100, c: [26, 158, 76] },
+];
+
+/** Couleur d'un etat, deduite de sa seule roulabilite. */
+export function couleurRoulabilite(score) {
+  const v = Math.min(100, Math.max(0, score));
+  let bas = RAMPE[0];
+  let haut = RAMPE[RAMPE.length - 1];
+  for (let i = 0; i < RAMPE.length - 1; i++) {
+    if (v >= RAMPE[i].p && v <= RAMPE[i + 1].p) {
+      bas = RAMPE[i];
+      haut = RAMPE[i + 1];
+      break;
+    }
+  }
+  const t = haut.p === bas.p ? 0 : (v - bas.p) / (haut.p - bas.p);
+  const canal = (i) => Math.round(bas.c[i] + (haut.c[i] - bas.c[i]) * t);
+  return `rgb(${canal(0)}, ${canal(1)}, ${canal(2)})`;
+}
+
+/** Couleur de l'etat d'un jour. */
+export function couleurEtat(etat) {
+  return couleurRoulabilite(etat.roulabilite);
+}
 
 /**
  * Deroule le bilan hydrique sur toute la serie fournie.
@@ -135,7 +184,7 @@ function classerEtat({ w, manteauNeigeux, tmax, tmin }) {
  * Renvoie null si c'est deja bon, ou si ca ne s'ameliore pas sur la fenetre.
  */
 export function delaiAvantSechage(jours, indexAujourdhui) {
-  const roulable = (j) => ['sec', 'parfait', 'humide'].includes(j.etat.cle);
+  const roulable = (j) => ETATS_ROULABLES.includes(j.etat.cle);
   if (roulable(jours[indexAujourdhui])) return 0;
   for (let i = indexAujourdhui + 1; i < jours.length; i++) {
     if (roulable(jours[i])) return i - indexAujourdhui;

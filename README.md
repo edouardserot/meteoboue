@@ -12,10 +12,32 @@ L'idée de fond : une même pluie ne produit pas le même sentier selon le sol.
 
 ## Ce que ça donne
 
-Pour chaque spot, une frise de 14 jours : précipitations, indice de boue 0-100,
-et un état lisible (`Parfait`, `Gras`, `Bourbier`, `Gelé`, `Dégel`, `Neige`),
-plus une phrase du type « Encore gras. Compter 3 jours avant que ça redevienne
-roulant. »
+Une grille **spots × jours** : 24 lignes, 15 colonnes (7 jours passés,
+aujourd'hui, 7 jours à venir). Une bande verte horizontale, c'est un spot
+fiable ; une colonne verte, c'est un bon jour. Les prévisions sont hachurées
+pour ne pas se confondre avec l'observé.
+
+Au-dessus, la réponse en une phrase : « 18 spots sur 24 sont roulants samedi.
+Le plus proche : Bouconne (~30 min, grip parfait). À éviter : Nailloux,
+Pamiers. »
+
+Les en-têtes de colonnes servent de **sélecteur de jour** : un clic sur samedi
+recolore la carte, réordonne les spots et réécrit le verdict. Un clic sur une
+cellule ouvre le détail du spot pour ce jour-là — frise des précipitations,
+nature du sol, bilan hydrique, paramètres du modèle.
+
+### La couleur ne code qu'une chose
+
+La teinte porte uniquement la **roulabilité**, sur une rampe continue vert →
+rouge : plus c'est vert, plus on y va. Il n'y a aucune légende à mémoriser.
+
+La *cause* est portée séparément, par un pictogramme, et seulement quand elle
+sort de l'ordinaire : ❄ pour le gel, la neige et le dégel. L'eau étant
+l'explication par défaut, elle n'a pas de symbole.
+
+C'est une correction d'une première version où la couleur mélangeait
+l'humidité (une grandeur physique) et la roulabilité (une décision), ce qui
+obligeait à retenir une légende de huit entrées pour lire une carte.
 
 ## Lancer
 
@@ -81,6 +103,10 @@ sol est sec et poussiéreux ; autour de 0,5-0,8 c'est le *hero dirt*, l'humidit�
 idéale ; au-delà de 1,0 ça devient gras, et au-delà de 1,22 c'est un bourbier.
 Les cas de gel, de dégel et de neige sont traités à part — un sol gelé roule
 très bien, un sol en dégel est le pire moment possible pour les sentiers.
+
+Chaque état porte une `roulabilite` de 0 à 100, qui est ce que la couleur
+affiche. C'est délibérément un autre axe que l'humidité : un sol gelé et un sol
+sec sont tous les deux roulants, pour des raisons opposées.
 
 Les 60 jours d'historique demandés à Open-Meteo au-delà de la fenêtre affichée
 servent à amorcer le réservoir : sans eux, on ignorerait dans quel état le sol

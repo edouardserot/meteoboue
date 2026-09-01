@@ -8,17 +8,8 @@
   --texte-3: #6b7f92;
   --accent: #4a9eff;
 
-  --etat-gele: #7dd3fc;
-  --etat-neige: #e2e8f0;
-  --etat-degel: #c084fc;
-  --etat-sec: #fbbf24;
-  --etat-parfait: #22c55e;
-  --etat-humide: #84cc16;
-  --etat-gras: #f97316;
-  --etat-bourbier: #b45309;
-
-  --entete-h: 60px;
-  --panneau-w: 380px;
+  --entete-h: 58px;
+  --col-label: 178px;
   --rayon: 10px;
 }
 
@@ -89,7 +80,6 @@ body {
 .horodatage {
   color: var(--texte-3);
   font-size: 12px;
-  font-variant-numeric: tabular-nums;
 }
 
 .bouton-discret {
@@ -98,8 +88,8 @@ body {
   color: var(--texte-2);
   border-radius: 6px;
   padding: 5px 11px;
+  font: inherit;
   font-size: 13px;
-  font-family: inherit;
   cursor: pointer;
 }
 
@@ -108,40 +98,55 @@ body {
   border-color: var(--accent);
 }
 
-/* ------------------------------ Grille ---------------------------- */
+/* ------------------------- Bandeau verdict ------------------------ */
 
-.grille {
-  flex: 1 1 auto;
-  display: grid;
-  grid-template-columns: var(--panneau-w) 1fr;
-  min-height: 0;
-}
-
-.panneau {
-  background: var(--fond-2);
-  border-right: 1px solid var(--bordure);
+.verdict-jour {
+  flex: 0 0 auto;
   display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.filtres {
-  display: flex;
-  gap: 10px;
-  padding: 12px 14px;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 20px;
+  background: var(--fond-3);
   border-bottom: 1px solid var(--bordure);
+}
+
+.verdict-jour__pastille {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
   flex: 0 0 auto;
 }
 
+.verdict-jour__texte {
+  margin: 0;
+  font-size: 15px;
+  color: var(--texte);
+}
+
+.verdict-jour__texte strong {
+  font-weight: 650;
+}
+
+/* --------------------------- Filtres ------------------------------ */
+
+.barre-filtres {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--bordure);
+  background: var(--fond-2);
+}
+
 .champ {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .champ span {
-  font-size: 11px;
+  font-size: 10.5px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--texte-3);
@@ -157,85 +162,230 @@ body {
   font-size: 13px;
 }
 
-/* --------------------------- Liste spots -------------------------- */
+.legende {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--texte-3);
+  flex-wrap: wrap;
+}
 
-.liste-spots {
-  list-style: none;
-  margin: 0;
-  padding: 8px;
-  overflow-y: auto;
+/* La rampe est continue : rien à mémoriser, plus c'est vert plus on y va. */
+.legende__rampe {
+  width: 130px;
+  height: 9px;
+  border-radius: 5px;
+  background: linear-gradient(
+    to left,
+    rgb(136, 19, 19),
+    rgb(214, 40, 40) 25%,
+    rgb(234, 108, 26) 45%,
+    rgb(222, 173, 20) 62%,
+    rgb(124, 191, 32) 80%,
+    rgb(26, 158, 76)
+  );
+}
+
+.legende__note {
+  padding-left: 10px;
+  border-left: 1px solid var(--bordure);
+}
+
+/* ------------------------------ Grille ---------------------------- */
+
+.grille {
   flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
   min-height: 0;
 }
 
-.spot {
-  display: grid;
-  grid-template-columns: 4px 1fr auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 12px;
-  border-radius: var(--rayon);
-  cursor: pointer;
-  border: 1px solid transparent;
+/* ------------------------ Tableau spots × jours ------------------- */
+
+.tableau {
+  background: var(--fond-2);
+  border-right: 1px solid var(--bordure);
+  overflow: auto;
+  min-height: 0;
+  padding-bottom: 8px;
 }
 
-.spot:hover {
+.tab__ligne {
+  display: grid;
+  grid-template-columns: var(--col-label) repeat(var(--nb-jours, 15), minmax(0, 1fr));
+  gap: 2px;
+  padding: 0 8px;
+  align-items: stretch;
+}
+
+.tab__ligne--entete {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--fond-2);
+  padding-top: 8px;
+  padding-bottom: 4px;
+  box-shadow: 0 1px 0 var(--bordure);
+}
+
+.tab__coin,
+.tab__label {
+  position: sticky;
+  left: 8px;
+  z-index: 2;
+  background: var(--fond-2);
+}
+
+.tab__coin {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--texte-3);
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 4px;
+}
+
+/* Les en-têtes de colonnes sont aussi le sélecteur de jour. */
+.tab__jour {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 3px 0;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: none;
+  color: var(--texte-3);
+  font: inherit;
+  font-size: 10px;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.tab__jour strong {
+  color: var(--texte-2);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.tab__jour:hover {
   background: var(--fond-3);
 }
 
-.spot--actif {
+.tab__jour--aujourdhui strong {
+  color: var(--accent);
+}
+
+.tab__jour--actif {
   background: var(--fond-3);
   border-color: var(--accent);
 }
 
-.spot__barre {
-  align-self: stretch;
-  border-radius: 2px;
-  min-height: 34px;
+.tab__jour--actif strong {
+  color: var(--texte);
 }
 
-.spot__nom {
+.tab__corps {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 3px;
+}
+
+.tab__label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  border: none;
+  border-radius: 5px;
+  padding: 2px 8px 2px 4px;
+  color: var(--texte);
+  font: inherit;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.tab__label:hover .tab__nom {
+  color: var(--accent);
+}
+
+.tab__nom {
+  font-size: 13px;
   font-weight: 550;
-  font-size: 14px;
-}
-
-.spot__meta {
-  font-size: 12px;
-  color: var(--texte-3);
-  margin-top: 2px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.spot__etat {
-  text-align: right;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.spot__indice {
-  display: block;
+.tab__meta {
   font-size: 11px;
   color: var(--texte-3);
-  font-weight: 400;
-  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tab__ligne--active {
+  background: var(--fond-3);
+  border-radius: 7px;
+}
+
+.tab__ligne--active .tab__label,
+.tab__ligne--active .tab__coin {
+  background: var(--fond-3);
+}
+
+.tab__cellule {
+  height: 27px;
+  border: none;
+  border-radius: 4px;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+}
+
+.tab__cellule:hover {
+  transform: scale(1.18);
+  outline: 1px solid #fff;
+}
+
+/* Les prévisions sont hachurées pour ne pas se confondre avec l'observé. */
+.tab__cellule--futur {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.17) 0 3px,
+    transparent 3px 7px
+  );
+}
+
+.tab__cellule--colonne {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.tab__glyphe {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+  line-height: 1;
 }
 
 /* ------------------------------ Carte ----------------------------- */
 
 .zone-carte {
   position: relative;
-  display: flex;
-  flex-direction: column;
   min-height: 0;
   min-width: 0;
 }
 
 .carte {
-  flex: 1 1 auto;
-  min-height: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .marqueur {
@@ -245,7 +395,13 @@ body {
   border: 2px solid rgba(15, 20, 25, 0.85);
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
   cursor: pointer;
-  transition: transform 0.12s;
+  transition: transform 0.12s, opacity 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .marqueur:hover,
@@ -254,11 +410,16 @@ body {
   border-color: #fff;
 }
 
+/* Les spots exclus par le filtre restent visibles, mais en retrait. */
+.marqueur--estompe {
+  opacity: 0.22;
+}
+
 /* ----------------------------- Détail ----------------------------- */
 
 .detail {
   flex: 0 0 auto;
-  max-height: 58%;
+  max-height: 46%;
   overflow-y: auto;
   background: var(--fond-2);
   border-top: 1px solid var(--bordure);
@@ -307,6 +468,13 @@ body {
   margin-bottom: 16px;
 }
 
+.verdict__quand {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--texte-3);
+}
+
 .verdict__etat {
   font-size: 16px;
   font-weight: 650;
@@ -330,20 +498,17 @@ body {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  cursor: default;
-  position: relative;
 }
 
 .jour--futur .jour__etat {
-  /* Les prévisions sont hachurées pour ne pas se confondre avec l'observé. */
   background-image: repeating-linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.16) 0 3px,
+    rgba(255, 255, 255, 0.17) 0 3px,
     transparent 3px 7px
   );
 }
 
-.jour--aujourdhui {
+.jour--actif {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 4px;
@@ -354,7 +519,6 @@ body {
   color: var(--texte-3);
   text-align: center;
   line-height: 1.25;
-  font-variant-numeric: tabular-nums;
 }
 
 .jour__date strong {
@@ -365,10 +529,9 @@ body {
 }
 
 .jour__pluie {
-  height: 34px;
+  height: 30px;
   display: flex;
   align-items: flex-end;
-  justify-content: center;
   background: var(--fond-3);
   border-radius: 3px;
   overflow: hidden;
@@ -378,7 +541,6 @@ body {
   width: 100%;
   background: var(--accent);
   border-radius: 2px 2px 0 0;
-  min-height: 0;
 }
 
 .jour__pluie-valeur {
@@ -386,19 +548,17 @@ body {
   color: var(--texte-3);
   text-align: center;
   height: 12px;
-  font-variant-numeric: tabular-nums;
 }
 
 .jour__etat {
-  height: 40px;
+  height: 30px;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  font-weight: 700;
-  color: rgba(15, 20, 25, 0.82);
-  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .frise-legende {
@@ -457,10 +617,6 @@ body {
   border-radius: 5px;
   overflow: hidden;
   margin: 4px 0 8px;
-}
-
-.texture span {
-  display: block;
 }
 
 .texture-legende {
@@ -529,35 +685,58 @@ body {
 
 /* ---------------------------- Responsive -------------------------- */
 
+@media (max-width: 1100px) {
+  .legende {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .grille {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, 42%) minmax(0, 58%);
+    grid-template-rows: minmax(0, 58%) minmax(0, 42%);
   }
 
-  .panneau {
+  .tableau {
     border-right: none;
     border-bottom: 1px solid var(--bordure);
   }
 
-  .detail {
-    max-height: 75%;
+  /* Quinze colonnes ne tiennent pas en largeur de téléphone : on fait
+     défiler horizontalement, la colonne des noms restant collée à gauche. */
+  .tab__ligne {
+    min-width: 620px;
   }
 
   .entete__titre p,
-  /* Sous 900 px le titre et l'horodatage se chevauchent : on garde le titre. */
   .horodatage {
     display: none;
   }
 
+  .verdict-jour__texte {
+    font-size: 14px;
+  }
+
+  /* Sur telephone, le detail se superpose au lieu d'ecraser la grille :
+     en dessous de 900 px il ne restait qu'une bande inutilisable. */
+  .detail {
+    position: fixed;
+    inset: var(--entete-h) 0 0 0;
+    max-height: none;
+    z-index: 30;
+    border-top: none;
+  }
+
   .frise {
-    /* Cinq colonnes par ligne : les 15 jours tiennent en trois rangées. */
     grid-template-columns: repeat(5, 1fr);
     gap: 4px;
   }
+
+  .frise-legende {
+    display: none;
+  }
 }
 
-/* Le fond de carte IGN est clair : on assombrit les contrôles MapLibre. */
 .maplibregl-ctrl-group {
   background: var(--fond-2);
 }

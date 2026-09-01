@@ -6,7 +6,7 @@
     <title>Météo Boue — état des sols VTT</title>
     <meta
       name="description"
-      content="Prévision de l'état des sols pour le VTT en Ariège et dans le piémont toulousain : 7 jours passés, 7 jours à venir, croisés avec la nature du sol."
+      content="Où rouler ce week-end ? État des sols VTT en Ariège et dans le piémont toulousain, 7 jours passés et 7 jours à venir, croisés avec la nature du sol."
     />
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
     <link rel="stylesheet" href="./src/style.css" />
@@ -15,7 +15,7 @@
     <header class="entete">
       <div class="entete__titre">
         <h1>Météo Boue</h1>
-        <p>État des sols VTT — Ariège &amp; piémont toulousain</p>
+        <p>Où rouler en Ariège &amp; piémont toulousain</p>
       </div>
       <div class="entete__infos">
         <span id="horodatage" class="horodatage"></span>
@@ -25,43 +25,53 @@
       </div>
     </header>
 
-    <main class="grille">
-      <aside class="panneau" id="panneau">
-        <div class="filtres">
-          <label class="champ">
-            <span>Secteur</span>
-            <select id="filtre-zone">
-              <option value="">Tous</option>
-            </select>
-          </label>
-          <label class="champ">
-            <span>Trier par</span>
-            <select id="tri">
-              <option value="etat">État du sol</option>
-              <option value="nom">Nom</option>
-              <option value="altitude">Altitude</option>
-              <option value="distance">Distance de Toulouse</option>
-            </select>
-          </label>
-        </div>
+    <!-- La réponse en une phrase, avant toute donnée. -->
+    <section id="verdict-jour" class="verdict-jour" hidden></section>
 
+    <div class="barre-filtres">
+      <label class="champ">
+        <span>Distance max</span>
+        <select id="filtre-distance">
+          <option value="">Toutes</option>
+          <option value="30">≈ 30 min · 30 km</option>
+          <option value="60">≈ 1 h · 60 km</option>
+          <option value="100">≈ 1 h 30 · 100 km</option>
+        </select>
+      </label>
+      <label class="champ">
+        <span>Trier par</span>
+        <select id="tri">
+          <option value="etat">Meilleur le jour choisi</option>
+          <option value="distance">Le plus proche</option>
+          <option value="nom">Nom</option>
+          <option value="altitude">Altitude</option>
+        </select>
+      </label>
+      <div class="legende" id="legende">
+        <span class="legende__titre">Ça roule</span>
+        <span class="legende__rampe" aria-hidden="true"></span>
+        <span class="legende__titre">N'y va pas</span>
+        <span class="legende__note">❄ = gel ou neige, pas de la boue</span>
+      </div>
+    </div>
+
+    <main class="grille">
+      <section class="tableau" id="tableau" aria-label="État des sols par spot et par jour">
         <div id="chargement" class="chargement">
           <div class="spinner" aria-hidden="true"></div>
           <p>Chargement de la météo…</p>
         </div>
-
-        <ul id="liste-spots" class="liste-spots" hidden></ul>
-      </aside>
+      </section>
 
       <div class="zone-carte">
         <div id="carte" class="carte"></div>
-
-        <section id="detail" class="detail" hidden aria-live="polite">
-          <button id="fermer-detail" class="fermer" type="button" aria-label="Fermer">&times;</button>
-          <div id="detail-contenu"></div>
-        </section>
       </div>
     </main>
+
+    <section id="detail" class="detail" hidden aria-live="polite">
+      <button id="fermer-detail" class="fermer" type="button" aria-label="Fermer">&times;</button>
+      <div id="detail-contenu"></div>
+    </section>
 
     <div id="erreur" class="erreur" hidden></div>
 
