@@ -31,14 +31,27 @@ const VITESSE_MOYENNE = 68;
 
 const el = (id) => document.getElementById(id);
 
+const CHEVRON =
+  '<svg class="podium__fleche" viewBox="0 0 20 20" fill="none" stroke="currentColor" ' +
+  'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+  '<path d="M7.5 4.5 13 10l-5.5 5.5" /></svg>';
+
+const pluriel = (n) => (n > 1 ? 's' : '');
+
 const etat = {
   spots: [],
   jours: new Map(), // id -> bilan journalier complet
   idxAuj: 0, // index d'aujourd'hui dans les series
   jourActif: 0, // index du jour selectionne
   selection: null,
+  zone: '', // '' = toutes
+  trajetMax: '', // '' = sans limite, sinon un seuil en km a vol d'oiseau
   marqueurs: new Map(),
   carte: null,
+  // Telephone seulement : « liste », « grille » ou « carte ». Au-dessus de
+  // 900 px la grille et la carte tiennent cote a cote et l'attribut est sans
+  // effet. La liste est le defaut : c'est elle qui repond a « ou rouler ? ».
+  vue: 'liste',
 };
 
 /* ------------------------------------------------------------------ */
@@ -67,18 +80,21 @@ async function demarrer() {
   calculerBilans(spots, meteo);
   etat.jourActif = etat.idxAuj;
 
-  remplirFiltreZone(spots);
+  remplirFiltres(spots);
 
   el('chargement').remove();
   el('horodatage').textContent = `Sol : relevé ${formaterDateCourte(genere)}`;
 
+  dessinerRail();
   dessinerTableau();
+  dessinerListe();
   dessinerMarqueurs();
   dessinerVerdict();
+  initialiserOnglets();
+  cadrerSurAujourdhui();
 
-  // Filtrer change la zone geographique regardee : la carte suit.
-  el('filtre-zone').addEventListener('change', filtrer);
-  el('filtre-distance').addEventListener('change', filtrer);
+  // Les puces de zone et de trajet appellent filtrer() elles-memes : elles
+  // changent la zone geographique regardee, et la carte suit.
   el('tri').addEventListener('change', rafraichirVues);
   el('fermer-detail').addEventListener('click', fermerDetail);
   el('rafraichir').addEventListener('click', () => {
@@ -116,15 +132,20 @@ function fenetre() {
 }
 
 function rafraichirVues() {
+  dessinerRail();
   dessinerTableau();
+  dessinerListe();
   majMarqueurs();
   dessinerVerdict();
 }
 
 function filtrer() {
+  majBoutonFiltres();
   rafraichirVues();
   const visibles = spotsAffiches();
-  if (visibles.length) {
+  // La carte peut etre masquee (vue Liste sur telephone) : son conteneur fait
+  // alors 0 px et le recadrage n'a pas de sens.
+  if (visibles.length && el('carte').clientWidth > 0) {
     etat.carte.fitBounds(emprise(visibles), { padding: 36, maxZoom: 10.5, duration: 600 });
   }
 }
@@ -133,19 +154,73 @@ function filtrer() {
 /* Selection des spots affiches                                        */
 /* ------------------------------------------------------------------ */
 
-function remplirFiltreZone(spots) {
-  const select = el('filtre-zone');
-  for (const zone of [...new Set(spots.map((s) => s.zone))]) {
-    const option = document.createElement('option');
-    option.value = zone;
-    option.textContent = zone;
-    select.append(option);
+/**
+ * Seuils de trajet. La valeur reste une distance a vol d'oiseau en km ;
+ * le libelle donne le temps de route, qui est ce qu'on a en tete.
+ */
+const TRAJETS = [
+  ['', 'Tout'],
+  ['30', '≤ 30 min'],
+  ['60', '≤ 1 h'],
+  ['100', '≤ 1 h 30'],
+  ['160', '≤ 2 h 30'],
+];
+
+function remplirFiltres(spots) {
+  const zones = [
+    ['', 'Toutes'],
+    ...[...new Set(spots.map((s) => s.zone))].map((z) => [z, z]),
+  ];
+  dessinerPuces(el('filtre-zone'), zones, 'zone');
+  dessinerPuces(el('filtre-distance'), TRAJETS, 'trajetMax');
+
+  // Sur telephone la barre est repliee : le bouton doit dire ce qui est
+  // filtre, sinon on cherche pourquoi des spots manquent.
+  document.body.dataset.filtres = 'ferme';
+  el('bouton-filtres').addEventListener('click', basculerFiltres);
+  majBoutonFiltres();
+}
+
+function basculerFiltres() {
+  const ouvert = document.body.dataset.filtres === 'ouvert';
+  document.body.dataset.filtres = ouvert ? 'ferme' : 'ouvert';
+  el('bouton-filtres').setAttribute('aria-expanded', String(!ouvert));
+}
+
+function majBoutonFiltres() {
+  const actifs = [];
+  if (etat.zone) actifs.push(etat.zone);
+  if (etat.trajetMax) {
+    actifs.push(TRAJETS.find(([valeur]) => valeur === etat.trajetMax)[1]);
+  }
+  el('libelle-filtres').textContent = actifs.length ? actifs.join(' · ') : 'Filtrer';
+  el('bouton-filtres').classList.toggle('bouton-filtres--actif', actifs.length > 0);
+}
+
+/** Un groupe de puces exclusives, liees a une cle de `etat`. */
+function dessinerPuces(conteneur, options, cle) {
+  conteneur.replaceChildren();
+
+  for (const [valeur, libelle] of options) {
+    const choisie = etat[cle] === valeur;
+    const puce = document.createElement('button');
+    puce.type = 'button';
+    puce.className = 'puce' + (choisie ? ' puce--actif' : '');
+    puce.textContent = libelle;
+    puce.setAttribute('aria-pressed', String(choisie));
+    puce.addEventListener('click', () => {
+      if (etat[cle] === valeur) return;
+      etat[cle] = valeur;
+      dessinerPuces(conteneur, options, cle);
+      filtrer();
+    });
+    conteneur.append(puce);
   }
 }
 
 function spotsAffiches() {
-  const zone = el('filtre-zone').value;
-  const distanceMax = Number(el('filtre-distance').value) || Infinity;
+  const zone = etat.zone;
+  const distanceMax = Number(etat.trajetMax) || Infinity;
   const tri = el('tri').value;
 
   const liste = etat.spots.filter(
@@ -178,44 +253,114 @@ function spotsAffiches() {
 /* Bandeau de verdict                                                  */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Compter ne decide rien : « 34 spots sur 34 roulent » laisse le lecteur
+ * devant la meme question qu'avant. Le bandeau classe donc, et propose les
+ * trois premiers du jour choisi, cliquables.
+ */
 function dessinerVerdict() {
   const boite = el('verdict-jour');
   const liste = spotsAffiches();
   boite.hidden = false;
+  boite.replaceChildren();
 
   if (!liste.length) {
     boite.innerHTML = `<p class="verdict-jour__texte">Aucun spot dans ce rayon.</p>`;
     return;
   }
 
-  const roulables = liste.filter((s) => ETATS_ROULABLES.includes(jourDe(s.id).etat.cle));
-  const aEviter = liste.filter((s) => jourDe(s.id).etat.roulabilite < 40);
-  const quand = nomJour(etat.jourActif);
+  // Le podium ne suit pas le tri choisi dans la barre de filtres : la
+  // question « ou aller ? » a toujours la meme reponse, le meilleur du jour
+  // et, a qualite egale, le plus proche.
+  const classement = [...liste].sort((a, b) => {
+    const ecart = jourDe(b.id).etat.roulabilite - jourDe(a.id).etat.roulabilite;
+    return ecart !== 0 ? ecart : distanceVol(a) - distanceVol(b);
+  });
 
-  let phrase;
+  const roulables = classement.filter((s) => ETATS_ROULABLES.includes(jourDe(s.id).etat.cle));
+  const aEviter = classement.filter((s) => jourDe(s.id).etat.roulabilite < 40);
+  const podium = classement.slice(0, 3);
+
+  let resume;
   if (!roulables.length) {
-    const moinsPire = liste[0];
-    phrase =
-      `Rien de vraiment roulant ${quand}. Le moins mauvais : ` +
-      `<strong>${echapper(moinsPire.nom)}</strong> (${trajet(moinsPire)}, ` +
-      `${jourDe(moinsPire.id).etat.label.toLowerCase()}).`;
+    resume = 'rien de vraiment roulant, voici les moins mauvais.';
   } else {
-    // Le plus proche qui roule est presque toujours le choix pratique.
-    const proche = [...roulables].sort((a, b) => distanceVol(a) - distanceVol(b))[0];
-    phrase =
-      `<strong>${roulables.length} spots sur ${liste.length}</strong> sont roulants ${quand}. ` +
-      `Le plus proche : <strong>${echapper(proche.nom)}</strong> (${trajet(proche)}, ` +
-      `${jourDe(proche.id).etat.label.toLowerCase()}).`;
-    if (aEviter.length) {
-      const noms = aEviter.slice(0, 3).map((s) => echapper(s.nom)).join(', ');
-      phrase += ` À éviter : ${noms}${aEviter.length > 3 ? '…' : ''}.`;
-    }
+    resume = `${roulables.length} spot${pluriel(roulables.length)} sur ${liste.length} ` +
+      `${roulables.length > 1 ? 'roulent' : 'roule'}`;
+    resume += aEviter.length ? `, ${aEviter.length} à éviter.` : '.';
   }
 
-  const couleur = couleurEtat(jourDe(liste[0].id).etat);
-  boite.innerHTML = `
-    <span class="verdict-jour__pastille" style="background:${couleur}"></span>
-    <p class="verdict-jour__texte">${phrase}</p>`;
+  const entete = document.createElement('div');
+  entete.className = 'verdict__entete';
+  entete.innerHTML =
+    `<span class="verdict__sur">La réponse pour</span>` +
+    `<strong class="verdict__jour">${echapper(majuscule(nomJour(etat.jourActif)))}</strong>` +
+    `<span class="verdict__resume">${resume}</span>` +
+    `<span class="verdict__tri">Classés : le meilleur du jour, puis le plus proche</span>`;
+  boite.append(entete);
+
+  const rangee = document.createElement('div');
+  rangee.className = 'podium';
+  podium.forEach((spot, i) => rangee.append(carteVerdict(spot, i + 1)));
+  if (aEviter.length) rangee.append(carteAEviter(aEviter));
+  boite.append(rangee);
+
+  // Sur telephone une seule carte tient : le reste passe en une ligne.
+  const suite = document.createElement('p');
+  suite.className = 'verdict__suite';
+  const autres = podium.slice(1).map((s) => `${s.nom} (${trajet(s)})`).join(', ');
+  suite.textContent =
+    (autres ? `Puis ${autres}.` : '') +
+    (aEviter.length ? ` ${aEviter.length} spot${pluriel(aEviter.length)} à éviter.` : '');
+  boite.append(suite);
+}
+
+function carteVerdict(spot, rang) {
+  const jours = etat.jours.get(spot.id);
+  const jour = jours[etat.jourActif];
+  const couleur = couleurEtat(jour.etat);
+
+  const carte = document.createElement('button');
+  carte.type = 'button';
+  carte.className = 'podium__carte';
+  carte.innerHTML =
+    `<span class="podium__rang">${rang}</span>` +
+    `<span class="podium__puce" style="background:${couleur}"></span>` +
+    `<span class="podium__ident">` +
+    `<span class="podium__nom">${echapper(spot.nom)}</span>` +
+    `<span class="podium__meta">${trajet(spot)} · ${spot.altitude ?? '?'} m · ` +
+    `${echapper(vitesseSechage(spot.hydro.drainage))}</span>` +
+    `</span>` +
+    `<span class="podium__bilan">` +
+    `<span class="podium__etat" style="color:${couleur}">${echapper(jour.etat.court)}</span>` +
+    `<span class="podium__note">${echapper(noteEtat(jours, etat.jourActif))}</span>` +
+    `</span>` +
+    CHEVRON;
+  carte.addEventListener('click', () => selectionner(spot.id, { recentrer: true }));
+  return carte;
+}
+
+function carteAEviter(aEviter) {
+  const pire = aEviter[aEviter.length - 1];
+  const jours = etat.jours.get(pire.id);
+  const couleur = couleurEtat(jours[etat.jourActif].etat);
+  // aEviter suit le classement, du moins pire au pire : on nomme les pires.
+  const noms = aEviter.slice(-3).reverse().map((s) => s.nom).join(', ');
+
+  const carte = document.createElement('div');
+  carte.className = 'podium__carte podium__carte--eviter';
+  carte.style.borderLeftColor = couleur;
+  carte.innerHTML =
+    `<span class="podium__ident">` +
+    `<span class="podium__nom">À éviter — ${aEviter.length} spot${pluriel(aEviter.length)}</span>` +
+    `<span class="podium__meta">${echapper(noms)}${aEviter.length > 3 ? '…' : ''}</span>` +
+    `</span>` +
+    `<span class="podium__bilan">` +
+    `<span class="podium__etat" style="color:${couleur}">` +
+    `${echapper(jours[etat.jourActif].etat.court)}</span>` +
+    `<span class="podium__note">${echapper(noteEtat(jours, etat.jourActif))}</span>` +
+    `</span>`;
+  return carte;
 }
 
 /* ------------------------------------------------------------------ */
@@ -251,6 +396,12 @@ function dessinerTableau() {
     bouton.addEventListener('click', () => choisirJour(i));
     entete.append(bouton);
   }
+
+  const finEntete = document.createElement('div');
+  finEntete.className = 'tab__coin--fin';
+  finEntete.innerHTML = `<span>État<br>${dateCourte(etat.jourActif)}</span>`;
+  entete.append(finEntete);
+
   conteneur.append(entete);
 
   // --- Une ligne par spot ---
@@ -291,10 +442,192 @@ function dessinerTableau() {
       ligne.append(c);
     }
 
+    // La couleur dit « c'est bon » ou « c'est mauvais », pas quoi en faire :
+    // cette colonne ecrit l'etat du jour choisi et le prochain bon creneau.
+    const jourActif = jours[etat.jourActif];
+    const fin = document.createElement('span');
+    fin.className = 'tab__fin';
+    fin.innerHTML =
+      `<span class="tab__fin-etat" style="color:${couleurEtat(jourActif.etat)}">` +
+      `${echapper(jourActif.etat.court)}</span>` +
+      `<span class="tab__fin-note">${echapper(noteEtat(jours, etat.jourActif))}</span>`;
+    ligne.append(fin);
+
     corps.append(ligne);
   }
 
   conteneur.append(corps);
+}
+
+/**
+ * Ce qu'il faut savoir en plus de l'etat du jour : combien de temps ca tient,
+ * ou a partir de quand ca redevient roulant.
+ */
+function noteEtat(jours, idx) {
+  const roulable = (j) => ETATS_ROULABLES.includes(j.etat.cle);
+  const fin = Math.min(jours.length - 1, etat.idxAuj + JOURS_FUTURS);
+
+  if (roulable(jours[idx])) {
+    for (let i = idx + 1; i <= fin; i++) {
+      if (!roulable(jours[i])) {
+        return i === idx + 1
+          ? `se gâte ${nomJourCourt(i)}`
+          : `tient jusqu’à ${nomJourCourt(i - 1)}`;
+      }
+    }
+    return 'ça tient';
+  }
+
+  const delai = delaiAvantSechage(jours, idx);
+  return delai === null ? 'hors fenêtre' : `bon dès ${nomJourCourt(idx + delai)}`;
+}
+
+/* ------------------------------------------------------------------ */
+/* Rail de jours et liste — vues telephone                             */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Sur telephone la grille n'est pas toujours a l'ecran : sans ce rail, le
+ * jour choisi ne serait plus modifiable depuis la liste ni depuis la carte.
+ */
+function dessinerRail() {
+  const rail = el('rail-jours');
+  const liste = spotsAffiches();
+  rail.replaceChildren();
+
+  for (const i of fenetre()) {
+    const date = new Date(`${etat.dates[i]}T12:00:00`);
+    const bouton = document.createElement('button');
+    bouton.type = 'button';
+    bouton.className =
+      'rail__jour' +
+      (i === etat.jourActif ? ' rail__jour--actif' : '') +
+      (i === etat.idxAuj ? ' rail__jour--aujourdhui' : '');
+
+    const bons = liste.filter((s) =>
+      ETATS_ROULABLES.includes(etat.jours.get(s.id)[i].etat.cle)
+    ).length;
+    const part = liste.length ? Math.round((bons / liste.length) * 100) : 0;
+
+    bouton.innerHTML =
+      `<span class="rail__nom">${
+        i === etat.idxAuj
+          ? 'auj.'
+          : date.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')
+      }</span>` +
+      `<span class="rail__num">${date.getDate()}</span>` +
+      `<span class="rail__sante"><i style="width:${part}%"></i></span>`;
+    bouton.title = `${nomJour(i)} — ${bons} spots sur ${liste.length} roulants`;
+    bouton.addEventListener('click', () => choisirJour(i));
+    rail.append(bouton);
+  }
+
+  // Le rail s'ouvre sur aujourd'hui, et suit le jour choisi s'il sort du cadre.
+  const actif = rail.querySelector('.rail__jour--actif');
+  if (actif) {
+    const debut = actif.offsetLeft;
+    const finBouton = debut + actif.offsetWidth;
+    if (debut < rail.scrollLeft || finBouton > rail.scrollLeft + rail.clientWidth) {
+      rail.scrollLeft = Math.max(0, debut - 12);
+    }
+  }
+}
+
+/**
+ * La meme information que la grille, mais lue ligne par ligne : le nom,
+ * l'etat du jour choisi ecrit en toutes lettres, et la frise des 15 jours
+ * qui garde l'intuition du tableau.
+ */
+function dessinerListe() {
+  const conteneur = el('liste');
+  const liste = spotsAffiches();
+  const index = fenetre();
+  conteneur.replaceChildren();
+
+  if (!liste.length) {
+    const vide = document.createElement('p');
+    vide.className = 'liste__vide';
+    vide.textContent = 'Aucun spot dans ce rayon.';
+    conteneur.append(vide);
+    return;
+  }
+
+  for (const spot of liste) {
+    const jours = etat.jours.get(spot.id);
+    const jour = jours[etat.jourActif];
+    const couleur = couleurEtat(jour.etat);
+
+    const frise = index
+      .map((i) => {
+        const classes =
+          'spot__case' +
+          (i > etat.idxAuj ? ' spot__case--futur' : '') +
+          (i === etat.jourActif ? ' spot__case--actif' : '');
+        return `<i class="${classes}" style="background-color:${couleurEtat(jours[i].etat)}"></i>`;
+      })
+      .join('');
+
+    const ligne = document.createElement('button');
+    ligne.type = 'button';
+    ligne.className = 'spot' + (spot.id === etat.selection ? ' spot--actif' : '');
+    ligne.innerHTML =
+      `<span class="spot__puce" style="background:${couleur}"></span>` +
+      `<span class="spot__nom">${echapper(spot.nom)}</span>` +
+      `<span class="spot__etat" style="color:${couleur}">${echapper(jour.etat.court)}</span>` +
+      `<span class="spot__meta">${trajet(spot)} · ${spot.altitude ?? '?'} m</span>` +
+      `<span class="spot__note">${echapper(noteEtat(jours, etat.jourActif))}</span>` +
+      `<span class="spot__frise">${frise}</span>`;
+    ligne.addEventListener('click', () => selectionner(spot.id, { recentrer: false }));
+    conteneur.append(ligne);
+  }
+}
+
+function initialiserOnglets() {
+  for (const bouton of document.querySelectorAll('.onglet')) {
+    bouton.addEventListener('click', () => basculerVue(bouton.dataset.vue));
+  }
+  basculerVue(etat.vue);
+}
+
+function basculerVue(vue) {
+  etat.vue = vue;
+  document.body.dataset.vue = vue;
+
+  for (const bouton of document.querySelectorAll('.onglet')) {
+    const actif = bouton.dataset.vue === vue;
+    bouton.classList.toggle('onglet--actif', actif);
+    bouton.setAttribute('aria-pressed', String(actif));
+  }
+
+  // MapLibre ne recalcule pas sa taille tant qu'il etait masque.
+  if (vue === 'carte') etat.carte?.resize();
+  // Idem pour le cadrage de la grille : tant qu'elle est masquee elle ne
+  // deborde pas, donc il n'y a rien a cadrer. On le fait a son affichage.
+  if (vue === 'grille') cadrerSurAujourdhui();
+}
+
+/**
+ * La grille deborde en largeur sur telephone. Sans ce cadrage elle s'ouvre
+ * sur sept jours de meteo passee et il faut faire defiler vers la droite
+ * pour atteindre aujourd'hui — l'inverse de ce qu'on vient y chercher.
+ */
+function cadrerSurAujourdhui() {
+  // Une seule fois : ensuite la position de defilement appartient au lecteur.
+  if (etat.grilleCadree) return;
+
+  const conteneur = el('tableau');
+  // Masquee (vue Liste ou Carte) ou assez large : rien a cadrer.
+  if (conteneur.scrollWidth <= conteneur.clientWidth) return;
+
+  const entete = conteneur.firstElementChild;
+  const colonne = entete.children[1 + fenetre().indexOf(etat.idxAuj)];
+  if (!colonne) return;
+
+  conteneur.scrollLeft = Math.max(
+    0,
+    colonne.offsetLeft - entete.firstElementChild.offsetWidth - 12
+  );
+  etat.grilleCadree = true;
 }
 
 function choisirJour(i) {
@@ -382,6 +715,7 @@ function majMarqueurs() {
 function selectionner(id, { recentrer }) {
   etat.selection = id;
   dessinerTableau();
+  dessinerListe();
   majMarqueurs();
 
   const spot = etat.spots.find((s) => s.id === id);
@@ -398,6 +732,7 @@ function fermerDetail() {
   etat.selection = null;
   el('detail').hidden = true;
   dessinerTableau();
+  dessinerListe();
   majMarqueurs();
 }
 
@@ -611,6 +946,21 @@ function nomJour(i) {
   const date = new Date(`${etat.dates[i]}T12:00:00`);
   const jour = date.toLocaleDateString('fr-FR', { weekday: 'long' });
   return `${ecart < 0 ? `${jour} dernier` : jour} ${date.getDate()}`;
+}
+
+/** « mer. 2 » — assez court pour un en-tete de colonne ou une note. */
+function dateCourte(i) {
+  const date = new Date(`${etat.dates[i]}T12:00:00`);
+  const jour = date.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '');
+  return `${jour}. ${date.getDate()}`;
+}
+
+/** Comme dateCourte, mais « aujourd'hui » et « demain » restent en clair. */
+function nomJourCourt(i) {
+  const ecart = i - etat.idxAuj;
+  if (ecart === 0) return 'aujourd’hui';
+  if (ecart === 1) return 'demain';
+  return dateCourte(i);
 }
 
 /** Distance a vol d'oiseau depuis Toulouse, en km. */

@@ -19,8 +19,27 @@
       </div>
       <div class="entete__infos">
         <span id="horodatage" class="horodatage"></span>
+        <!-- Téléphone uniquement : la barre de filtres se replie ici. -->
+        <button
+          id="bouton-filtres"
+          class="bouton-discret bouton-filtres"
+          type="button"
+          aria-expanded="false"
+          aria-controls="barre-filtres"
+        >
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+               stroke-linecap="round" aria-hidden="true">
+            <path d="M3 7h3.5" /><path d="M10.5 7H17" /><circle cx="8.5" cy="7" r="2" />
+            <path d="M3 13h7.5" /><path d="M14.5 13H17" /><circle cx="12.5" cy="13" r="2" />
+          </svg>
+          <span id="libelle-filtres">Filtrer</span>
+        </button>
         <button id="rafraichir" class="bouton-discret" type="button" title="Recharger la météo">
-          Rafraîchir
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16.5 6.5A7.5 7.5 0 1 0 17 11" /><path d="M16.5 3v3.6h-3.6" />
+          </svg>
+          <span class="bouton-discret__texte">Rafraîchir</span>
         </button>
       </div>
     </header>
@@ -28,32 +47,27 @@
     <!-- La réponse en une phrase, avant toute donnée. -->
     <section id="verdict-jour" class="verdict-jour" hidden></section>
 
-    <div class="barre-filtres">
-      <label class="champ">
-        <span>Zone</span>
-        <select id="filtre-zone">
-          <option value="">Toutes</option>
-        </select>
-      </label>
-      <label class="champ">
-        <span>Distance max</span>
-        <select id="filtre-distance">
-          <option value="">Toutes</option>
-          <option value="30">≈ 30 min · 30 km</option>
-          <option value="60">≈ 1 h · 60 km</option>
-          <option value="100">≈ 1 h 30 · 100 km</option>
-          <option value="160">≈ 2 h 30 · 160 km</option>
-        </select>
-      </label>
-      <label class="champ">
-        <span>Trier par</span>
-        <select id="tri">
-          <option value="etat">Meilleur le jour choisi</option>
-          <option value="distance">Le plus proche</option>
-          <option value="nom">Nom</option>
-          <option value="altitude">Altitude</option>
-        </select>
-      </label>
+    <!-- Des puces plutôt que des listes déroulantes : l'état du filtre se lit
+         sans cliquer, et changer de zone tient en un geste. -->
+    <div class="barre-filtres" id="barre-filtres">
+      <span class="filtres__titre">Zone</span>
+      <div class="puces" id="filtre-zone" role="group" aria-label="Zone"></div>
+
+      <span class="filtres__sep" aria-hidden="true"></span>
+
+      <span class="filtres__titre">Trajet</span>
+      <div class="puces" id="filtre-distance" role="group" aria-label="Trajet maximum"></div>
+
+      <span class="filtres__sep" aria-hidden="true"></span>
+
+      <span class="filtres__titre">Trier</span>
+      <select id="tri" class="puce puce--liste" aria-label="Trier par">
+        <option value="etat">Meilleur le jour choisi</option>
+        <option value="distance">Le plus proche</option>
+        <option value="nom">Nom</option>
+        <option value="altitude">Altitude</option>
+      </select>
+
       <div class="legende" id="legende">
         <span class="legende__titre">Ça roule</span>
         <span class="legende__rampe" aria-hidden="true"></span>
@@ -62,6 +76,10 @@
       </div>
     </div>
 
+    <!-- Sur telephone la grille n'est pas toujours a l'ecran : le rail porte
+         alors le choix du jour, et s'ouvre sur aujourd'hui. -->
+    <div id="rail-jours" class="rail-jours" aria-label="Choisir un jour"></div>
+
     <main class="grille">
       <section class="tableau" id="tableau" aria-label="État des sols par spot et par jour">
         <div id="chargement" class="chargement">
@@ -69,6 +87,12 @@
           <p>Chargement de la météo…</p>
         </div>
       </section>
+
+      <section
+        class="liste"
+        id="liste"
+        aria-label="Spots classés pour le jour choisi"
+      ></section>
 
       <div class="zone-carte">
         <div id="carte" class="carte"></div>
@@ -79,6 +103,37 @@
       <button id="fermer-detail" class="fermer" type="button" aria-label="Fermer">&times;</button>
       <div id="detail-contenu"></div>
     </section>
+
+    <!-- Bascule de vue, telephone uniquement : au-dessus de 900 px la grille
+         et la carte tiennent cote a cote. -->
+    <nav class="onglets" id="onglets" aria-label="Vue">
+      <button type="button" class="onglet" data-vue="liste">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7 5.5h9" /><path d="M7 10h9" /><path d="M7 14.5h9" />
+          <path d="M4 5.5h.01" /><path d="M4 10h.01" /><path d="M4 14.5h.01" />
+        </svg>
+        <span>Liste</span>
+      </button>
+      <button type="button" class="onglet" data-vue="grille">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linejoin="round" aria-hidden="true">
+          <rect x="3.5" y="3.5" width="5.5" height="5.5" rx="1" />
+          <rect x="11" y="3.5" width="5.5" height="5.5" rx="1" />
+          <rect x="3.5" y="11" width="5.5" height="5.5" rx="1" />
+          <rect x="11" y="11" width="5.5" height="5.5" rx="1" />
+        </svg>
+        <span>Grille</span>
+      </button>
+      <button type="button" class="onglet" data-vue="carte">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10 17.5s5.5-5.2 5.5-9a5.5 5.5 0 1 0-11 0c0 3.8 5.5 9 5.5 9Z" />
+          <circle cx="10" cy="8.5" r="2" />
+        </svg>
+        <span>Carte</span>
+      </button>
+    </nav>
 
     <div id="erreur" class="erreur" hidden></div>
 

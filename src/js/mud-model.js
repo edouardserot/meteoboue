@@ -44,14 +44,25 @@ export const ETATS_ROULABLES = ['parfait', 'humide', 'sec', 'gele'];
 /**
  * Rampe rouge -> vert. Un seul degrade continu, donc rien a apprendre :
  * plus c'est vert, plus on y va.
+ *
+ * Le palier jaune est a 55, pas a 62 : « sec » vaut 68 et « gele » 72, deux
+ * etats de ETATS_ROULABLES qui tombaient juste au-dessus d'un jaune d'alerte.
+ * Une semaine seche affichait alors trente-quatre lignes jaunes alors que
+ * tout roulait. Le vert s'etale desormais de 70 a 100 (palier ajoute a 85),
+ * ce qui donne quatre verts distincts aux quatre etats roulables.
+ * La moitie rouge ne bouge quasiment pas : elle se lisait deja bien.
+ *
+ * Toute modification ici doit etre reportee sur .legende__rampe dans
+ * src/style.css, qui recopie le degrade a la main.
  */
 const RAMPE = [
-  { p: 0, c: [136, 19, 19] },
-  { p: 25, c: [214, 40, 40] },
-  { p: 45, c: [234, 108, 26] },
-  { p: 62, c: [222, 173, 20] },
-  { p: 80, c: [124, 191, 32] },
-  { p: 100, c: [26, 158, 76] },
+  { p: 0, c: [124, 22, 22] },
+  { p: 20, c: [196, 44, 40] },
+  { p: 40, c: [223, 110, 32] },
+  { p: 55, c: [214, 168, 34] },
+  { p: 70, c: [126, 178, 54] },
+  { p: 85, c: [46, 150, 72] },
+  { p: 100, c: [26, 168, 84] },
 ];
 
 /** Couleur d'un etat, deduite de sa seule roulabilite. */

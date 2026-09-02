@@ -10,6 +10,8 @@
 
   --entete-h: 58px;
   --col-label: 178px;
+  /* Colonne de droite : l'etat du jour choisi, ecrit en toutes lettres. */
+  --col-etat: 118px;
   --rayon: 10px;
 }
 
@@ -83,6 +85,9 @@ body {
 }
 
 .bouton-discret {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: var(--fond-3);
   border: 1px solid var(--bordure);
   color: var(--texte-2);
@@ -98,23 +103,42 @@ body {
   border-color: var(--accent);
 }
 
+/* Les icônes ne servent que sur téléphone, où les libellés se réduisent. */
+.bouton-discret svg {
+  display: none;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+.bouton-filtres {
+  display: none;
+}
+
+.bouton-filtres--actif {
+  border-color: var(--accent);
+  color: var(--texte);
+}
+
+#libelle-filtres {
+  max-width: 116px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ------------------------- Bandeau verdict ------------------------ */
 
+/* Compter ne décide rien : le bandeau classe, et propose. La bande est en
+   retrait (--fond) pour que les cartes (--fond-2) s'en détachent. */
 .verdict-jour {
   flex: 0 0 auto;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 13px 20px;
-  background: var(--fond-3);
+  flex-direction: column;
+  gap: 9px;
+  padding: 12px 20px 14px;
+  background: var(--fond);
   border-bottom: 1px solid var(--bordure);
-}
-
-.verdict-jour__pastille {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  flex: 0 0 auto;
 }
 
 .verdict-jour__texte {
@@ -123,8 +147,155 @@ body {
   color: var(--texte);
 }
 
-.verdict-jour__texte strong {
+.verdict__entete {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.verdict__sur {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  color: var(--texte-2);
+}
+
+.verdict__jour {
+  font-size: 14.5px;
   font-weight: 650;
+}
+
+.verdict__resume {
+  font-size: 13px;
+  color: var(--texte-3);
+}
+
+.verdict__resume::before {
+  content: '— ';
+}
+
+.verdict__tri {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--texte-3);
+}
+
+/* Ligne du podium : trois choix, plus ce qu'il faut éviter. */
+.podium {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.podium__carte {
+  flex: 1 1 250px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  background: var(--fond-2);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  color: var(--texte);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.podium__carte:hover {
+  border-color: var(--accent);
+}
+
+.podium__carte--eviter {
+  border-left: 3px solid var(--texte-3);
+  cursor: default;
+}
+
+.podium__carte--eviter:hover {
+  border-color: var(--bordure);
+  border-left-color: inherit;
+}
+
+.podium__rang {
+  flex: 0 0 auto;
+  width: 21px;
+  height: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--fond-3);
+  border: 1px solid var(--bordure);
+  color: var(--texte-2);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.podium__puce {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.podium__ident {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.podium__nom {
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.podium__meta {
+  font-size: 11px;
+  color: var(--texte-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.podium__bilan {
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.podium__etat {
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.podium__note {
+  font-size: 10.5px;
+  color: var(--texte-3);
+}
+
+.podium__fleche {
+  flex: 0 0 auto;
+  width: 13px;
+  height: 13px;
+  color: var(--texte-3);
+}
+
+/* Repli téléphone : une seule carte tient, le reste passe en une ligne. */
+.verdict__suite {
+  display: none;
+  margin: 0;
+  font-size: 12px;
+  color: var(--texte-3);
 }
 
 /* --------------------------- Filtres ------------------------------ */
@@ -132,34 +303,69 @@ body {
 .barre-filtres {
   flex: 0 0 auto;
   display: flex;
-  align-items: flex-end;
-  gap: 16px;
-  padding: 10px 20px;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 7px 20px;
   border-bottom: 1px solid var(--bordure);
   background: var(--fond-2);
 }
 
-.champ {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.champ span {
+.filtres__titre {
   font-size: 10.5px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  font-weight: 600;
   color: var(--texte-3);
 }
 
-.champ select {
-  background: var(--fond-3);
+.filtres__sep {
+  width: 1px;
+  align-self: stretch;
+  margin: 2px 0;
+  background: var(--bordure);
+}
+
+.puces {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* L'état du filtre se lit sans ouvrir quoi que ce soit. */
+.puce {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  background: transparent;
   border: 1px solid var(--bordure);
-  color: var(--texte);
-  border-radius: 6px;
-  padding: 6px 8px;
+  border-radius: 999px;
+  color: var(--texte-2);
   font: inherit;
-  font-size: 13px;
+  font-size: 12.5px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.puce:hover {
+  color: var(--texte);
+  border-color: var(--texte-3);
+}
+
+.puce--actif {
+  background: rgba(74, 158, 255, 0.14);
+  border-color: var(--accent);
+  color: var(--texte);
+}
+
+/* Le tri reste une liste déroulante — quatre entrées peu utilisées ne
+   méritent pas quatre puces de plus — mais prend la même forme. */
+.puce--liste {
+  padding-right: 6px;
+}
+
+.puce--liste:hover {
+  border-color: var(--texte-3);
 }
 
 .legende {
@@ -172,19 +378,22 @@ body {
   flex-wrap: wrap;
 }
 
-/* La rampe est continue : rien à mémoriser, plus c'est vert plus on y va. */
+/* La rampe est continue : rien à mémoriser, plus c'est vert plus on y va.
+   Recopie à la main du tableau RAMPE de src/js/mud-model.js : les deux
+   doivent rester d'accord. */
 .legende__rampe {
   width: 130px;
   height: 9px;
   border-radius: 5px;
   background: linear-gradient(
     to left,
-    rgb(136, 19, 19),
-    rgb(214, 40, 40) 25%,
-    rgb(234, 108, 26) 45%,
-    rgb(222, 173, 20) 62%,
-    rgb(124, 191, 32) 80%,
-    rgb(26, 158, 76)
+    rgb(124, 22, 22),
+    rgb(196, 44, 40) 20%,
+    rgb(223, 110, 32) 40%,
+    rgb(214, 168, 34) 55%,
+    rgb(126, 178, 54) 70%,
+    rgb(46, 150, 72) 85%,
+    rgb(26, 168, 84)
   );
 }
 
@@ -195,10 +404,12 @@ body {
 
 /* ------------------------------ Grille ---------------------------- */
 
+/* La colonne « État » prend de la place : le tableau gagne un peu sur la
+   carte, sinon les cellules de jour tomberaient sous 28 px de large. */
 .grille {
   flex: 1 1 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
   min-height: 0;
 }
 
@@ -214,7 +425,10 @@ body {
 
 .tab__ligne {
   display: grid;
-  grid-template-columns: var(--col-label) repeat(var(--nb-jours, 15), minmax(0, 1fr));
+  grid-template-columns:
+    var(--col-label)
+    repeat(var(--nb-jours, 15), minmax(0, 1fr))
+    var(--col-etat);
   gap: 2px;
   padding: 0 8px;
   align-items: stretch;
@@ -373,6 +587,269 @@ body {
   color: rgba(255, 255, 255, 0.92);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
   line-height: 1;
+}
+
+/* ------------------- Colonne « État » de la grille ----------------- */
+
+/* La couleur seule ne dit pas quoi faire : cette colonne ecrit l'etat du
+   jour choisi et la date du prochain bon creneau. Elle sert aussi de
+   secours quand la teinte passe mal — plein soleil, daltonisme. */
+.tab__coin--fin {
+  display: flex;
+  align-items: flex-end;
+  padding: 0 0 4px 6px;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  color: var(--texte-3);
+}
+
+.tab__fin {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding-left: 6px;
+}
+
+.tab__fin-etat {
+  font-size: 11.5px;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab__fin-note {
+  font-size: 10px;
+  color: var(--texte-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --------------------------- Rail de jours ------------------------ */
+
+/* Telephone uniquement. En vue Liste ou Carte la grille n'est pas a
+   l'ecran : sans ce rail, le jour choisi ne serait plus modifiable. */
+.rail-jours {
+  display: none;
+  flex: 0 0 auto;
+  gap: 6px;
+  padding: 9px 12px;
+  background: var(--fond-2);
+  border-bottom: 1px solid var(--bordure);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.rail-jours::-webkit-scrollbar {
+  display: none;
+}
+
+.rail__jour {
+  flex: 0 0 auto;
+  width: 46px;
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0 5px;
+  background: none;
+  border: 1px solid var(--bordure);
+  border-radius: 9px;
+  color: var(--texte-2);
+  font: inherit;
+  cursor: pointer;
+}
+
+.rail__nom {
+  font-size: 9.5px;
+  color: var(--texte-3);
+}
+
+.rail__num {
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.15;
+}
+
+.rail__jour--actif {
+  background: var(--fond-3);
+  border-color: var(--accent);
+}
+
+.rail__jour--actif .rail__num {
+  color: var(--texte);
+}
+
+.rail__jour--aujourdhui .rail__nom,
+.rail__jour--aujourdhui .rail__num {
+  color: var(--accent);
+}
+
+/* Part des spots affiches qui roulent ce jour-la : on repere le bon
+   week-end sans avoir a lire la grille entiere. */
+.rail__sante {
+  display: block;
+  width: 28px;
+  height: 3px;
+  margin-top: 3px;
+  border-radius: 2px;
+  background: rgb(178, 39, 36);
+  overflow: hidden;
+}
+
+.rail__sante i {
+  display: block;
+  height: 100%;
+  background: rgb(26, 168, 84);
+}
+
+/* ---------------------- Liste (vue telephone) --------------------- */
+
+.liste {
+  display: none;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--fond-2);
+}
+
+.spot {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  column-gap: 10px;
+  row-gap: 3px;
+  align-items: center;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(42, 54, 68, 0.6);
+  color: var(--texte);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.spot--actif {
+  background: var(--fond-3);
+}
+
+.spot__puce {
+  grid-column: 1;
+  grid-row: 1;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.spot__nom {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spot__etat {
+  grid-column: 3;
+  grid-row: 1;
+  font-size: 11.5px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.spot__meta {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: 11.5px;
+  color: var(--texte-3);
+}
+
+.spot__note {
+  grid-column: 3;
+  grid-row: 2;
+  font-size: 10.5px;
+  color: var(--texte-3);
+  white-space: nowrap;
+}
+
+/* La frise garde l'intuition de la grille dans une liste : on voit si le
+   spot sort d'une semaine seche ou d'un deluge. */
+.spot__frise {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  display: flex;
+  gap: 1.5px;
+  height: 7px;
+  margin-top: 4px;
+}
+
+.spot__case {
+  flex: 1 1 0;
+  border-radius: 1px;
+}
+
+.spot__case--futur {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.17) 0 3px,
+    transparent 3px 7px
+  );
+}
+
+.spot__case--actif {
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.liste__vide {
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--texte-3);
+  font-size: 13px;
+}
+
+/* ------------------------ Bascule de vue -------------------------- */
+
+.onglets {
+  display: none;
+  flex: 0 0 auto;
+  height: 56px;
+  background: var(--fond-2);
+  border-top: 1px solid var(--bordure);
+}
+
+.onglet {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--texte-3);
+  font: inherit;
+  font-size: 10.5px;
+  cursor: pointer;
+}
+
+.onglet svg {
+  width: 19px;
+  height: 19px;
+}
+
+.onglet--actif {
+  color: var(--accent);
+}
+
+.onglet--actif span {
+  font-weight: 650;
 }
 
 /* ------------------------------ Carte ----------------------------- */
@@ -685,16 +1162,96 @@ body {
 
 /* ---------------------------- Responsive -------------------------- */
 
-@media (max-width: 1100px) {
+/* La barre de filtres tient sur une ligne tant que la légende lui laisse la
+   place : on lui retire d'abord sa note, puis la légende entière. */
+@media (max-width: 1500px) {
+  .legende__note {
+    display: none;
+  }
+}
+
+@media (max-width: 1400px) {
   .legende {
     display: none;
   }
 }
 
 @media (max-width: 900px) {
+  /* Une seule vue à la fois. Le partage grille + carte ne laissait à
+     chacune qu'une bande inexploitable, et la carte affichait surtout des
+     points superposés. */
   .grille {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, 58%) minmax(0, 42%);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .rail-jours,
+  .onglets {
+    display: flex;
+  }
+
+  body[data-vue='liste'] .liste {
+    display: block;
+  }
+
+  body[data-vue='liste'] .tableau,
+  body[data-vue='liste'] .zone-carte,
+  body[data-vue='grille'] .zone-carte,
+  body[data-vue='carte'] .tableau {
+    display: none;
+  }
+
+  /* Repliée derrière le bouton « Filtrer » de l'en-tête : 53 px rendus à la
+     liste, qui est ce qu'on est venu lire. Ouverte, une seule ligne qui
+     défile, sans les intitulés de groupe — les puces se lisent seules. */
+  .barre-filtres {
+    display: none;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 6px 12px;
+  }
+
+  body[data-filtres='ouvert'] .barre-filtres {
+    display: flex;
+  }
+
+  .bouton-filtres {
+    display: inline-flex;
+  }
+
+  .bouton-discret {
+    min-height: 40px;
+    padding: 0 11px;
+  }
+
+  .bouton-discret svg {
+    display: block;
+  }
+
+  .bouton-discret__texte {
+    display: none;
+  }
+
+  .barre-filtres::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filtres__titre {
+    display: none;
+  }
+
+  .puces,
+  .filtres__sep,
+  .puce {
+    flex: 0 0 auto;
+  }
+
+  /* Cible tactile : 40 px de puce dans une bande de 52. */
+  .puce {
+    height: 40px;
+    padding: 0 14px;
+    font-size: 13px;
   }
 
   .tableau {
@@ -702,10 +1259,11 @@ body {
     border-bottom: 1px solid var(--bordure);
   }
 
-  /* Quinze colonnes ne tiennent pas en largeur de téléphone : on fait
-     défiler horizontalement, la colonne des noms restant collée à gauche. */
+  /* Quinze colonnes plus la colonne « État » ne tiennent pas en largeur de
+     téléphone : on fait défiler horizontalement, la colonne des noms
+     restant collée à gauche. */
   .tab__ligne {
-    min-width: 620px;
+    min-width: 740px;
   }
 
   .entete__titre p,
@@ -715,6 +1273,30 @@ body {
 
   .verdict-jour__texte {
     font-size: 14px;
+  }
+
+  /* Une seule carte de podium tient en largeur de téléphone : les suivantes
+     se replient dans la ligne « Puis… ». */
+  .verdict-jour {
+    padding: 11px 12px 12px;
+  }
+
+  .podium__carte:nth-child(n + 2) {
+    display: none;
+  }
+
+  .verdict__sur,
+  .verdict__tri {
+    display: none;
+  }
+
+  /* Le sur-titre disparaît : le tiret n'a plus rien à relier. */
+  .verdict__resume::before {
+    content: none;
+  }
+
+  .verdict__suite {
+    display: block;
   }
 
   /* Sur telephone, le detail se superpose au lieu d'ecraser la grille :
