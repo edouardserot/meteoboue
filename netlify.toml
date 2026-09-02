@@ -3,11 +3,13 @@
   publish = "."
   command = ""
 
-# Le JSON des spots ne change qu'apres une passe d'enrichissement.
+# Le JSON des spots ne bouge qu'apres une passe d'enrichissement, mais quand il
+# bouge c'est pour ajouter des spots : les garder une heure en cache donne un
+# site qui ment. Revalidation a chaque chargement, l'ETag rend le 304 gratuit.
 [[headers]]
   for = "/data/*"
   [headers.values]
-    Cache-Control = "public, max-age=3600"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Le code du site, lui, doit pouvoir etre repousse sans attendre un cache.
 [[headers]]
