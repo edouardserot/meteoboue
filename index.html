@@ -6,7 +6,7 @@
     <title>Météo Boue — état des sols VTT</title>
     <meta
       name="description"
-      content="Où rouler ce week-end ? État des sols VTT en Ariège et dans le piémont toulousain, 7 jours passés et 7 jours à venir, croisés avec la nature du sol."
+      content="Où rouler ce week-end ? État des sols VTT en Ariège, dans le piémont toulousain et les Hautes-Pyrénées, 7 jours passés et 7 jours à venir, croisés avec la nature du sol."
     />
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
     <link rel="stylesheet" href="./src/style.css" />
@@ -15,7 +15,7 @@
     <header class="entete">
       <div class="entete__titre">
         <h1>Météo Boue</h1>
-        <p>Où rouler en Ariège &amp; piémont toulousain</p>
+        <p>Où rouler en Ariège, piémont toulousain &amp; Hautes-Pyrénées</p>
       </div>
       <div class="entete__infos">
         <span id="horodatage" class="horodatage"></span>
@@ -30,12 +30,19 @@
 
     <div class="barre-filtres">
       <label class="champ">
+        <span>Zone</span>
+        <select id="filtre-zone">
+          <option value="">Toutes</option>
+        </select>
+      </label>
+      <label class="champ">
         <span>Distance max</span>
         <select id="filtre-distance">
           <option value="">Toutes</option>
           <option value="30">≈ 30 min · 30 km</option>
           <option value="60">≈ 1 h · 60 km</option>
           <option value="100">≈ 1 h 30 · 100 km</option>
+          <option value="160">≈ 2 h 30 · 160 km</option>
         </select>
       </label>
       <label class="champ">

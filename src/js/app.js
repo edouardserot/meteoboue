@@ -67,6 +67,8 @@ async function demarrer() {
   calculerBilans(spots, meteo);
   etat.jourActif = etat.idxAuj;
 
+  remplirFiltreZone(spots);
+
   el('chargement').remove();
   el('horodatage').textContent = `Sol : relevé ${formaterDateCourte(genere)}`;
 
@@ -74,7 +76,9 @@ async function demarrer() {
   dessinerMarqueurs();
   dessinerVerdict();
 
-  el('filtre-distance').addEventListener('change', rafraichirVues);
+  // Filtrer change la zone geographique regardee : la carte suit.
+  el('filtre-zone').addEventListener('change', filtrer);
+  el('filtre-distance').addEventListener('change', filtrer);
   el('tri').addEventListener('change', rafraichirVues);
   el('fermer-detail').addEventListener('click', fermerDetail);
   el('rafraichir').addEventListener('click', () => {
@@ -117,16 +121,38 @@ function rafraichirVues() {
   dessinerVerdict();
 }
 
+function filtrer() {
+  rafraichirVues();
+  const visibles = spotsAffiches();
+  if (visibles.length) {
+    etat.carte.fitBounds(emprise(visibles), { padding: 36, maxZoom: 10.5, duration: 600 });
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Selection des spots affiches                                        */
 /* ------------------------------------------------------------------ */
 
+function remplirFiltreZone(spots) {
+  const select = el('filtre-zone');
+  for (const zone of [...new Set(spots.map((s) => s.zone))]) {
+    const option = document.createElement('option');
+    option.value = zone;
+    option.textContent = zone;
+    select.append(option);
+  }
+}
+
 function spotsAffiches() {
+  const zone = el('filtre-zone').value;
   const distanceMax = Number(el('filtre-distance').value) || Infinity;
   const tri = el('tri').value;
 
   const liste = etat.spots.filter(
-    (s) => etat.jours.has(s.id) && distanceVol(s) <= distanceMax
+    (s) =>
+      etat.jours.has(s.id) &&
+      distanceVol(s) <= distanceMax &&
+      (!zone || s.zone === zone)
   );
 
   liste.sort((a, b) => {
@@ -300,12 +326,22 @@ function initialiserCarte() {
       },
       layers: [{ id: 'ign', type: 'raster', source: 'ign' }],
     },
-    center: [1.55, 43.25],
-    zoom: 7.6,
+    bounds: emprise(etat.spots),
+    fitBoundsOptions: { padding: 36, maxZoom: 9 },
   });
 
   etat.carte.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
   etat.carte.addControl(new maplibregl.ScaleControl({ maxWidth: 90, unit: 'metric' }));
+}
+
+/** Rectangle englobant tous les spots : le cadrage suit les zones ajoutees. */
+function emprise(spots) {
+  const lons = spots.map((s) => s.lon);
+  const lats = spots.map((s) => s.lat);
+  return [
+    [Math.min(...lons), Math.min(...lats)],
+    [Math.max(...lons), Math.max(...lats)],
+  ];
 }
 
 function dessinerMarqueurs() {

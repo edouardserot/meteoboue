@@ -1,6 +1,7 @@
 # Météo Boue
 
-Prévision de l'état des sols pour le VTT, en Ariège et dans le piémont toulousain.
+Prévision de l'état des sols pour le VTT, en Ariège, dans le piémont toulousain
+et dans les Hautes-Pyrénées (corridor Lourdes — pic du Midi de Bigorre).
 
 Aucun service météo ne garde l'historique récent, et aucun ne dit si ça va être
 gras. Ce site croise **7 jours de météo passée et 7 jours à venir** avec la
@@ -12,12 +13,12 @@ L'idée de fond : une même pluie ne produit pas le même sentier selon le sol.
 
 ## Ce que ça donne
 
-Une grille **spots × jours** : 24 lignes, 15 colonnes (7 jours passés,
+Une grille **spots × jours** : 35 lignes, 15 colonnes (7 jours passés,
 aujourd'hui, 7 jours à venir). Une bande verte horizontale, c'est un spot
 fiable ; une colonne verte, c'est un bon jour. Les prévisions sont hachurées
 pour ne pas se confondre avec l'observé.
 
-Au-dessus, la réponse en une phrase : « 18 spots sur 24 sont roulants samedi.
+Au-dessus, la réponse en une phrase : « 26 spots sur 35 sont roulants samedi.
 Le plus proche : Bouconne (~30 min, grip parfait). À éviter : Nailloux,
 Pamiers. »
 
@@ -48,12 +49,15 @@ python -m http.server 8123
 Puis ouvrir <http://localhost:8123/>. Aucune dépendance à installer, aucun
 backend : le navigateur appelle Open-Meteo directement.
 
-Les caractéristiques de sol sont figées dans `data/spots.enriched.json`. Pour
-les régénérer après avoir ajouté des spots dans `data/spots.json` :
+Les caractéristiques de sol sont figées dans `data/spots.enriched.json`. Après
+avoir ajouté des spots dans `data/spots.json` :
 
 ```bash
 node scripts/enrich-spots.mjs
 ```
+
+Seuls les spots absents du fichier sont calculés ; ajouter une zone ne
+rejoue pas les autres. `--force` recalcule tout.
 
 Le script est volontairement lent (~12 s par spot) : SoilGrids plafonne autour
 de 5 requêtes par minute.

@@ -1,7 +1,7 @@
 /**
  * Acces a Open-Meteo.
  *
- * L'API accepte plusieurs coordonnees dans une seule requete : les 24 spots
+ * L'API accepte plusieurs coordonnees dans une seule requete : tous les spots
  * sont donc recuperes en un unique appel HTTP.
  *
  * La fenetre demandee couvre :

@@ -1,5 +1,5 @@
 {
-  "$comment": "Spots VTT — Ariege et piemont toulousain. lat/lon = point representatif de la zone de ride.",
+  "$comment": "Spots VTT — Ariege, piemont toulousain et Hautes-Pyrenees. lat/lon = point representatif de la zone de ride.",
   "spots": [
     { "id": "prat-dalbis",      "nom": "Prat d'Albis",              "zone": "Ariège",             "lat": 42.9200, "lon": 1.5480, "note": "Descentes depuis le plateau au-dessus de Foix" },
     { "id": "pech-de-foix",     "nom": "Pech de Foix",              "zone": "Ariège",             "lat": 42.9310, "lon": 1.6000, "note": "Singles calcaires au-dessus de Foix" },
@@ -24,6 +24,17 @@
     { "id": "arfons",           "nom": "Arfons / Montagne Noire",   "zone": "Piémont toulousain", "lat": 43.4406, "lon": 2.1633, "note": "Forêt domaniale, granite et arène" },
     { "id": "auterive-ariege",  "nom": "Auterive / vallée de l'Ariège","zone": "Piémont toulousain","lat": 43.3486, "lon": 1.4778, "note": "Basses terrasses, graves" },
     { "id": "verfeil-girou",    "nom": "Verfeil / coteaux du Girou","zone": "Piémont toulousain", "lat": 43.6558, "lon": 1.6547, "note": "Coteaux molassiques à l'est de Toulouse" },
-    { "id": "muret-ramee",      "nom": "Muret / Bois de la Ramée",  "zone": "Piémont toulousain", "lat": 43.4583, "lon": 1.3278, "note": "Bois de plaine en bord de Garonne" }
+    { "id": "muret-ramee",      "nom": "Muret / Bois de la Ramée",  "zone": "Piémont toulousain", "lat": 43.4583, "lon": 1.3278, "note": "Bois de plaine en bord de Garonne" },
+    { "id": "pic-du-jer",       "nom": "Pic du Jer",                "zone": "Hautes-Pyrénées",    "lat": 43.0793, "lon": -0.0300, "note": "Descentes depuis le sommet, au-dessus de Lourdes" },
+    { "id": "lac-de-lourdes",   "nom": "Lac de Lourdes / Poueyferré","zone": "Hautes-Pyrénées",   "lat": 43.1100, "lon": -0.0790, "note": "Boucles de plaine autour du lac, terrain molassique" },
+    { "id": "saint-pe-bigorre", "nom": "Bois de Saint-Pé-de-Bigorre","zone": "Hautes-Pyrénées",   "lat": 43.0750, "lon": -0.1550, "note": "Forêt du piémont, calcaire très arrosé" },
+    { "id": "pibeste-argeles",  "nom": "Ouzous / piémont du Pibeste","zone": "Hautes-Pyrénées",   "lat": 43.0330, "lon": -0.1150, "note": "Versants boisés sous le Pibeste, au-dessus du gave" },
+    { "id": "hautacam",         "nom": "Hautacam",                  "zone": "Hautes-Pyrénées",    "lat": 42.9750, "lon": -0.0090, "note": "Bike park et estives, schistes et pelouses d'altitude" },
+    { "id": "val-dazun",        "nom": "Val d'Azun / Arrens",       "zone": "Hautes-Pyrénées",    "lat": 42.9600, "lon": -0.1850, "note": "Vallée VTT balisée, estives au-dessus d'Arrens" },
+    { "id": "bagneres-bedat",   "nom": "Bagnères / Le Bédat",       "zone": "Hautes-Pyrénées",    "lat": 43.0625, "lon": 0.1290, "note": "Forêt au-dessus de Bagnères-de-Bigorre" },
+    { "id": "labassere",        "nom": "Labassère / Baronnies",     "zone": "Hautes-Pyrénées",    "lat": 43.0300, "lon": 0.1100, "note": "Versants ardoisiers, schistes du piémont" },
+    { "id": "la-mongie",        "nom": "La Mongie / Tourmalet",     "zone": "Hautes-Pyrénées",    "lat": 42.9090, "lon": 0.1800, "note": "Station, pistes de descente, enneigé longtemps" },
+    { "id": "pic-du-midi",      "nom": "Pic du Midi / Sencours",    "zone": "Hautes-Pyrénées",    "lat": 42.9340, "lon": 0.1470, "note": "Haute montagne, la descente depuis le sommet" },
+    { "id": "payolle-aspin",    "nom": "Payolle / Col d'Aspin",     "zone": "Hautes-Pyrénées",    "lat": 42.9400, "lon": 0.2700, "note": "Plateau et forêts autour du lac de Payolle" }
   ]
 }

@@ -5,9 +5,11 @@
  *   - altitude/pente/expo -> MNT IGN RGE ALTI via la Geoplateforme
  *
  * Ces donnees ne changent pas : on les fige dans data/spots.enriched.json,
- * le front n'appelle plus ensuite que la meteo.
+ * le front n'appelle plus ensuite que la meteo. Les spots deja enrichis sont
+ * repris tels quels : ajouter une zone ne recalcule que ses spots.
  *
- *   node scripts/enrich-spots.mjs
+ *   node scripts/enrich-spots.mjs           # complete les spots manquants
+ *   node scripts/enrich-spots.mjs --force   # recalcule tout
  */
 
 import { readFile, writeFile } from 'node:fs/promises';
@@ -214,14 +216,42 @@ async function relief(lat, lon) {
 
 /* ------------------------------ Main ------------------------------ */
 
+const force = process.argv.includes('--force');
 const { spots } = JSON.parse(await readFile(ENTREE, 'utf8'));
+
+// Repli sur un cache vide au premier passage, ou si le fichier a ete supprime.
+const anciens = force
+  ? []
+  : await readFile(SORTIE, 'utf8').then(
+      (t) => JSON.parse(t).spots ?? [],
+      () => []
+    );
+// La cle porte les coordonnees : deplacer un point le fait recalculer, alors
+// qu'un simple renommage se contente du releve deja en cache.
+const cle = (s) => `${s.id}@${s.lat},${s.lon}`;
+const dejaFait = new Map(anciens.map((s) => [cle(s), s]));
+
 const resultats = [];
 const echecs = [];
+const aFaire = spots.filter((s) => !dejaFait.has(cle(s)));
 
-console.log(`Enrichissement de ${spots.length} spots...\n`);
+console.log(
+  `Enrichissement de ${aFaire.length} spot(s) sur ${spots.length}` +
+    (dejaFait.size ? ` (${dejaFait.size} repris tels quels)` : '') +
+    `...\n`
+);
 
-for (const [index, spot] of spots.entries()) {
-  const etiquette = `[${String(index + 1).padStart(2)}/${spots.length}] ${spot.nom}`;
+let rang = 0;
+for (const spot of spots) {
+  const connu = dejaFait.get(cle(spot));
+  if (connu) {
+    // Le nom, la zone et la note viennent toujours de spots.json.
+    resultats.push({ ...connu, ...spot });
+    continue;
+  }
+
+  rang += 1;
+  const etiquette = `[${String(rang).padStart(2)}/${aFaire.length}] ${spot.nom}`;
   try {
     // Relief et lithologie n'ont pas de quota : on les lance en parallele.
     const [sol, litho, terrain] = await Promise.all([
@@ -285,7 +315,7 @@ for (const [index, spot] of spots.entries()) {
     console.error(`${etiquette}\n      ECHEC : ${err.message}\n`);
   }
 
-  if (index < spots.length - 1) await pause(PAUSE_SOILGRIDS_MS);
+  if (rang < aFaire.length) await pause(PAUSE_SOILGRIDS_MS);
 }
 
 await writeFile(
