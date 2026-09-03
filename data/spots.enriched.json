@@ -1,5 +1,5 @@
 {
-  "genere": "2026-09-02T07:35:34.217Z",
+  "genere": "2026-09-03T21:16:47.732Z",
   "spots": [
     {
       "id": "prat-dalbis",
@@ -1513,6 +1513,1746 @@
         }
       },
       "resume": "argile limoneuse sur calcaires, marnes et gypse — séchage moyen"
+    },
+    {
+      "id": "sidobre",
+      "nom": "Sidobre / Lacrouzette",
+      "zone": "Tarn",
+      "lat": 43.605,
+      "lon": 2.355,
+      "note": "Chaos granitique, arène et blocs",
+      "altitude": 491,
+      "pentePct": 6,
+      "exposition": 166,
+      "sol": {
+        "argile": 22,
+        "limon": 41.6,
+        "sable": 36.4,
+        "densite": 1.21,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Schistes et grès",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1362,
+        "thetaFc": 0.2642,
+        "thetaSat": 0.5434,
+        "stockWp": 20.44,
+        "stockFc": 39.63,
+        "stockSat": 81.51,
+        "drainage": 0.6803,
+        "ruissellementBase": 0.1482,
+        "kcExposition": 1.0349,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "gréseux / métamorphique",
+          "facteur": 1.2000000000000002,
+          "familles": [
+            "gréseux",
+            "métamorphique"
+          ],
+          "descr": "Schistes et grès"
+        }
+      },
+      "resume": "limon argilo-sableux sur schistes et grès — sèche vite"
+    },
+    {
+      "id": "monts-de-lacaune",
+      "nom": "Monts de Lacaune",
+      "zone": "Tarn",
+      "lat": 43.72,
+      "lon": 2.67,
+      "note": "Hauts plateaux schisteux, très arrosés",
+      "altitude": 964,
+      "pentePct": 33,
+      "exposition": 131,
+      "sol": {
+        "argile": 24,
+        "limon": 36.1,
+        "sable": 39.9,
+        "densite": 0.99,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Schistes et grès",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1463,
+        "thetaFc": 0.2645,
+        "thetaSat": 0.6264,
+        "stockWp": 21.94,
+        "stockFc": 39.67,
+        "stockSat": 93.96,
+        "drainage": 0.7407,
+        "ruissellementBase": 0.2912,
+        "kcExposition": 1.0984,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "gréseux / métamorphique",
+          "facteur": 1.2000000000000002,
+          "familles": [
+            "gréseux",
+            "métamorphique"
+          ],
+          "descr": "Schistes et grès"
+        }
+      },
+      "resume": "limon argilo-sableux sur schistes et grès — sèche très vite"
+    },
+    {
+      "id": "serenac",
+      "nom": "Sérénac / vallée du Tarn",
+      "zone": "Tarn",
+      "lat": 43.9561,
+      "lon": 2.2664,
+      "note": "Base VTT au-dessus des gorges, versants boisés",
+      "altitude": 315,
+      "pentePct": 9.5,
+      "exposition": 74,
+      "sol": {
+        "argile": 23.4,
+        "limon": 41.9,
+        "sable": 34.7,
+        "densite": 1.4,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Schistes et grès",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1428,
+        "thetaFc": 0.2723,
+        "thetaSat": 0.4717,
+        "stockWp": 21.41,
+        "stockFc": 40.84,
+        "stockSat": 70.75,
+        "drainage": 0.6677,
+        "ruissellementBase": 0.1709,
+        "kcExposition": 0.9843,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "gréseux / métamorphique",
+          "facteur": 1.2000000000000002,
+          "familles": [
+            "gréseux",
+            "métamorphique"
+          ],
+          "descr": "Schistes et grès"
+        }
+      },
+      "resume": "limon argilo-sableux sur schistes et grès — sèche vite"
+    },
+    {
+      "id": "foret-de-gresigne",
+      "nom": "Forêt de Grésigne",
+      "zone": "Tarn",
+      "lat": 44.02,
+      "lon": 1.78,
+      "note": "Forêt domaniale sur grès, sols sableux",
+      "altitude": 262,
+      "pentePct": 19.4,
+      "exposition": 280,
+      "sol": {
+        "argile": 31.8,
+        "limon": 38.4,
+        "sable": 29.9,
+        "densite": 1.27,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Grès",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1848,
+        "thetaFc": 0.3122,
+        "thetaSat": 0.5208,
+        "stockWp": 27.71,
+        "stockFc": 46.83,
+        "stockSat": 78.11,
+        "drainage": 0.5689,
+        "ruissellementBase": 0.254,
+        "kcExposition": 0.9798,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "gréseux",
+          "facteur": 1.3,
+          "familles": [
+            "gréseux"
+          ],
+          "descr": "Grès"
+        }
+      },
+      "resume": "argile limoneuse sur grès — sèche vite"
+    },
+    {
+      "id": "montredon-labessonnie",
+      "nom": "Montredon-Labessonnié",
+      "zone": "Tarn",
+      "lat": 43.7147,
+      "lon": 2.3283,
+      "note": "Piémont du Sidobre, collines et bocage",
+      "altitude": 479,
+      "pentePct": 6.6,
+      "exposition": 178,
+      "sol": {
+        "argile": 24.7,
+        "limon": 39.2,
+        "sable": 36.2,
+        "densite": 1.28,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Argiles",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1493,
+        "thetaFc": 0.274,
+        "thetaSat": 0.517,
+        "stockWp": 22.39,
+        "stockFc": 41.11,
+        "stockSat": 77.55,
+        "drainage": 0.3154,
+        "ruissellementBase": 0.1616,
+        "kcExposition": 1.0396,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "marno-argileux",
+          "facteur": 0.6,
+          "familles": [
+            "marno-argileux"
+          ],
+          "descr": "Argiles"
+        }
+      },
+      "resume": "limon argilo-sableux sur argiles — sèche lentement"
+    },
+    {
+      "id": "angles-haut-thore",
+      "nom": "Anglès / Haut-Thoré",
+      "zone": "Tarn",
+      "lat": 43.5628,
+      "lon": 2.5644,
+      "note": "Plateau du Somail, tourbières et forêts",
+      "altitude": 747,
+      "pentePct": 3.4,
+      "exposition": 165,
+      "sol": {
+        "argile": 24.3,
+        "limon": 36.6,
+        "sable": 39.2,
+        "densite": 1.27,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Gneiss",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1473,
+        "thetaFc": 0.2665,
+        "thetaSat": 0.5208,
+        "stockWp": 22.09,
+        "stockFc": 39.97,
+        "stockSat": 78.11,
+        "drainage": 0.5747,
+        "ruissellementBase": 0.144,
+        "kcExposition": 1.0197,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "métamorphique",
+          "facteur": 1.1,
+          "familles": [
+            "métamorphique"
+          ],
+          "descr": "Gneiss"
+        }
+      },
+      "resume": "limon argilo-sableux sur gneiss — sèche vite"
+    },
+    {
+      "id": "cordes-vere",
+      "nom": "Cordes-sur-Ciel / Vère",
+      "zone": "Tarn",
+      "lat": 44.0642,
+      "lon": 1.9539,
+      "note": "Coteaux calcaires du Cordais",
+      "altitude": 227,
+      "pentePct": 33.1,
+      "exposition": 43,
+      "sol": {
+        "argile": 29.1,
+        "limon": 40.6,
+        "sable": 30.3,
+        "densite": 1.38,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Argiles",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1715,
+        "thetaFc": 0.3019,
+        "thetaSat": 0.4792,
+        "stockWp": 25.73,
+        "stockFc": 45.28,
+        "stockSat": 71.89,
+        "drainage": 0.3124,
+        "ruissellementBase": 0.3119,
+        "kcExposition": 0.8903,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "marno-argileux",
+          "facteur": 0.6,
+          "familles": [
+            "marno-argileux"
+          ],
+          "descr": "Argiles"
+        }
+      },
+      "resume": "argile limoneuse sur argiles — sèche lentement"
+    },
+    {
+      "id": "lautrec-agout",
+      "nom": "Lautrec / pays d'Agout",
+      "zone": "Tarn",
+      "lat": 43.705,
+      "lon": 2.1394,
+      "note": "Coteaux molassiques, terrain gras",
+      "altitude": 291,
+      "pentePct": 19.8,
+      "exposition": 109,
+      "sol": {
+        "argile": 28.7,
+        "limon": 45.7,
+        "sable": 25.7,
+        "densite": 1.37,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Argiles",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1695,
+        "thetaFc": 0.3096,
+        "thetaSat": 0.4849,
+        "stockWp": 25.42,
+        "stockFc": 46.44,
+        "stockSat": 72.74,
+        "drainage": 0.2959,
+        "ruissellementBase": 0.2438,
+        "kcExposition": 1.0387,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "marno-argileux",
+          "facteur": 0.6,
+          "familles": [
+            "marno-argileux"
+          ],
+          "descr": "Argiles"
+        }
+      },
+      "resume": "argile limoneuse sur argiles — sèche lentement"
+    },
+    {
+      "id": "pic-de-nore",
+      "nom": "Pic de Nore",
+      "zone": "Aude",
+      "lat": 43.4172,
+      "lon": 2.5044,
+      "note": "Point haut de la Montagne Noire, landes et schistes",
+      "altitude": 931,
+      "pentePct": 16.2,
+      "exposition": 205,
+      "sol": {
+        "argile": 23.7,
+        "limon": 38,
+        "sable": 38.4,
+        "densite": 1.05,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Schistes et grès",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1443,
+        "thetaFc": 0.2659,
+        "thetaSat": 0.6057,
+        "stockWp": 21.64,
+        "stockFc": 39.89,
+        "stockSat": 90.85,
+        "drainage": 0.6868,
+        "ruissellementBase": 0.2056,
+        "kcExposition": 1.0881,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "gréseux / métamorphique",
+          "facteur": 1.2000000000000002,
+          "familles": [
+            "gréseux",
+            "métamorphique"
+          ],
+          "descr": "Schistes et grès"
+        }
+      },
+      "resume": "limon argilo-sableux sur schistes et grès — sèche vite"
+    },
+    {
+      "id": "cabardes-villeneuve",
+      "nom": "Cabardès / Villeneuve-Minervois",
+      "zone": "Aude",
+      "lat": 43.355,
+      "lon": 2.44,
+      "note": "Versant sud de la Montagne Noire, calcaire sec",
+      "altitude": 541,
+      "pentePct": 39.3,
+      "exposition": 84,
+      "sol": {
+        "argile": 28.9,
+        "limon": 39.2,
+        "sable": 32,
+        "densite": 1.23,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Schistes et grès",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1705,
+        "thetaFc": 0.2977,
+        "thetaSat": 0.5377,
+        "stockWp": 25.58,
+        "stockFc": 44.66,
+        "stockSat": 80.66,
+        "drainage": 0.6489,
+        "ruissellementBase": 0.3421,
+        "kcExposition": 0.9843,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "gréseux / métamorphique",
+          "facteur": 1.2000000000000002,
+          "familles": [
+            "gréseux",
+            "métamorphique"
+          ],
+          "descr": "Schistes et grès"
+        }
+      },
+      "resume": "argile limoneuse sur schistes et grès — sèche vite"
+    },
+    {
+      "id": "lagrasse-corbieres",
+      "nom": "Lagrasse / Corbières",
+      "zone": "Aude",
+      "lat": 43.08,
+      "lon": 2.63,
+      "note": "Garrigue et crêtes au-dessus de Lagrasse",
+      "altitude": 179,
+      "pentePct": 12.9,
+      "exposition": 131,
+      "sol": {
+        "argile": 30.5,
+        "limon": 40.5,
+        "sable": 29,
+        "densite": 1.29,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Argiles",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1785,
+        "thetaFc": 0.3095,
+        "thetaSat": 0.5151,
+        "stockWp": 26.78,
+        "stockFc": 46.43,
+        "stockSat": 77.26,
+        "drainage": 0.2663,
+        "ruissellementBase": 0.2165,
+        "kcExposition": 1.0508,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "marno-argileux",
+          "facteur": 0.6,
+          "familles": [
+            "marno-argileux"
+          ],
+          "descr": "Argiles"
+        }
+      },
+      "resume": "argile limoneuse sur argiles — sèche lentement"
+    },
+    {
+      "id": "mouthoumet",
+      "nom": "Mouthoumet / Hautes-Corbières",
+      "zone": "Aude",
+      "lat": 42.9756,
+      "lon": 2.5297,
+      "note": "Plateau isolé, schistes et calcaires",
+      "altitude": 603,
+      "pentePct": 21.7,
+      "exposition": 61,
+      "sol": {
+        "argile": 27.5,
+        "limon": 42.8,
+        "sable": 29.8,
+        "densite": 1.18,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Grès",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1633,
+        "thetaFc": 0.2968,
+        "thetaSat": 0.5566,
+        "stockWp": 24.49,
+        "stockFc": 44.52,
+        "stockSat": 83.49,
+        "drainage": 0.677,
+        "ruissellementBase": 0.2483,
+        "kcExposition": 0.9369,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "gréseux",
+          "facteur": 1.3,
+          "familles": [
+            "gréseux"
+          ],
+          "descr": "Grès"
+        }
+      },
+      "resume": "argile limoneuse sur grès — sèche vite"
+    },
+    {
+      "id": "bugarach",
+      "nom": "Bugarach / Pech de Bugarach",
+      "zone": "Aude",
+      "lat": 42.8756,
+      "lon": 2.3547,
+      "note": "Autour du pic, calcaire et marnes",
+      "altitude": 489,
+      "pentePct": 14.2,
+      "exposition": 309,
+      "sol": {
+        "argile": 29,
+        "limon": 40.7,
+        "sable": 30.4,
+        "densite": 1.31,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Calcaires, marnes et gypse",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1707,
+        "thetaFc": 0.301,
+        "thetaSat": 0.5075,
+        "stockWp": 25.61,
+        "stockFc": 45.15,
+        "stockSat": 76.13,
+        "drainage": 0.4859,
+        "ruissellementBase": 0.2168,
+        "kcExposition": 0.9464,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "calcaire / marno-argileux",
+          "facteur": 1.025,
+          "familles": [
+            "calcaire",
+            "marno-argileux"
+          ],
+          "descr": "Calcaires, marnes et gypse"
+        }
+      },
+      "resume": "argile limoneuse sur calcaires, marnes et gypse — séchage moyen"
+    },
+    {
+      "id": "camurac-sault",
+      "nom": "Camurac / plateau de Sault",
+      "zone": "Aude",
+      "lat": 42.7956,
+      "lon": 1.9856,
+      "note": "Altitude, enneigé une partie de l'hiver",
+      "altitude": 1082,
+      "pentePct": 60.8,
+      "exposition": 109,
+      "sol": {
+        "argile": 24.6,
+        "limon": 41.2,
+        "sable": 34.2,
+        "densite": 1.07,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Grès",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1488,
+        "thetaFc": 0.2776,
+        "thetaSat": 0.5962,
+        "stockWp": 22.31,
+        "stockFc": 41.64,
+        "stockSat": 89.43,
+        "drainage": 0.8572,
+        "ruissellementBase": 0.4322,
+        "kcExposition": 1.0488,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "gréseux",
+          "facteur": 1.3,
+          "familles": [
+            "gréseux"
+          ],
+          "descr": "Grès"
+        }
+      },
+      "resume": "limon argilo-sableux sur grès — sèche très vite"
+    },
+    {
+      "id": "quillan-pierre-lys",
+      "nom": "Quillan / forêt des Fanges",
+      "zone": "Aude",
+      "lat": 42.833,
+      "lon": 2.256,
+      "note": "Forêt d'altitude sur calcaire, au-dessus des gorges",
+      "altitude": 1020,
+      "pentePct": 14.8,
+      "exposition": 203,
+      "sol": {
+        "argile": 25.8,
+        "limon": 40.6,
+        "sable": 33.7,
+        "densite": 1.1,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Calcaires, marnes et gypse",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1548,
+        "thetaFc": 0.283,
+        "thetaSat": 0.5868,
+        "stockWp": 23.21,
+        "stockFc": 42.45,
+        "stockSat": 88.02,
+        "drainage": 0.5446,
+        "ruissellementBase": 0.207,
+        "kcExposition": 1.0817,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "calcaire / marno-argileux",
+          "facteur": 1.025,
+          "familles": [
+            "calcaire",
+            "marno-argileux"
+          ],
+          "descr": "Calcaires, marnes et gypse"
+        }
+      },
+      "resume": "limon argilo-sableux sur calcaires, marnes et gypse — sèche vite"
+    },
+    {
+      "id": "massif-clape",
+      "nom": "Massif de la Clape",
+      "zone": "Aude",
+      "lat": 43.15,
+      "lon": 3.0833,
+      "note": "Calcaire littoral, le plus sec du lot",
+      "altitude": 186,
+      "pentePct": 5.5,
+      "exposition": 135,
+      "sol": {
+        "argile": 31.1,
+        "limon": 42.3,
+        "sable": 26.7,
+        "densite": 1.36,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Calcaires, marnes et gypse",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1813,
+        "thetaFc": 0.3161,
+        "thetaSat": 0.4887,
+        "stockWp": 27.19,
+        "stockFc": 47.41,
+        "stockSat": 73.3,
+        "drainage": 0.4269,
+        "ruissellementBase": 0.1817,
+        "kcExposition": 1.0233,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "calcaire / marno-argileux",
+          "facteur": 1.025,
+          "familles": [
+            "calcaire",
+            "marno-argileux"
+          ],
+          "descr": "Calcaires, marnes et gypse"
+        }
+      },
+      "resume": "argile limoneuse sur calcaires, marnes et gypse — séchage moyen"
+    },
+    {
+      "id": "font-romeu-cerdagne",
+      "nom": "Font-Romeu / Cerdagne",
+      "zone": "Pyrénées-Orientales",
+      "lat": 42.5053,
+      "lon": 2.04,
+      "note": "Plateau d'altitude, granite et pelouses",
+      "altitude": 1760,
+      "pentePct": 19.4,
+      "exposition": 157,
+      "sol": {
+        "argile": 23.1,
+        "limon": 38.6,
+        "sable": 38.4,
+        "densite": 1.1,
+        "echantillon": "couronne 600 m (2/4 points)"
+      },
+      "lithologie": {
+        "descr": "Granites",
+        "type": "Roches Magmatiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1413,
+        "thetaFc": 0.2638,
+        "thetaSat": 0.5858,
+        "stockWp": 21.19,
+        "stockFc": 39.57,
+        "stockSat": 87.88,
+        "drainage": 0.682,
+        "ruissellementBase": 0.2192,
+        "kcExposition": 1.1071,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "magmatique",
+          "facteur": 1.15,
+          "familles": [
+            "magmatique"
+          ],
+          "descr": "Granites"
+        }
+      },
+      "resume": "limon argilo-sableux sur granites — sèche vite"
+    },
+    {
+      "id": "les-angles-capcir",
+      "nom": "Les Angles / Capcir",
+      "zone": "Pyrénées-Orientales",
+      "lat": 42.5678,
+      "lon": 2.0139,
+      "note": "Bike park et forêts du Capcir, enneigé longtemps",
+      "altitude": 2163,
+      "pentePct": 19.4,
+      "exposition": 222,
+      "sol": {
+        "argile": 21.3,
+        "limon": 42.3,
+        "sable": 36.4,
+        "densite": 1.07,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Granites",
+        "type": "Roches Magmatiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1325,
+        "thetaFc": 0.2615,
+        "thetaSat": 0.5981,
+        "stockWp": 19.87,
+        "stockFc": 39.22,
+        "stockSat": 89.72,
+        "drainage": 0.7179,
+        "ruissellementBase": 0.2122,
+        "kcExposition": 1.0865,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "magmatique",
+          "facteur": 1.15,
+          "familles": [
+            "magmatique"
+          ],
+          "descr": "Granites"
+        }
+      },
+      "resume": "limon argilo-sableux sur granites — sèche vite"
+    },
+    {
+      "id": "canigou-vernet",
+      "nom": "Canigou / Vernet-les-Bains",
+      "zone": "Pyrénées-Orientales",
+      "lat": 42.5453,
+      "lon": 2.3861,
+      "note": "Versants nord du Canigou, gneiss et granite",
+      "altitude": 651,
+      "pentePct": 8.1,
+      "exposition": 357,
+      "sol": {
+        "argile": 27.3,
+        "limon": 43.2,
+        "sable": 29.6,
+        "densite": 1.28,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Gneiss",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1625,
+        "thetaFc": 0.2968,
+        "thetaSat": 0.517,
+        "stockWp": 24.38,
+        "stockFc": 44.52,
+        "stockSat": 77.55,
+        "drainage": 0.5343,
+        "ruissellementBase": 0.1797,
+        "kcExposition": 0.9515,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "métamorphique",
+          "facteur": 1.1,
+          "familles": [
+            "métamorphique"
+          ],
+          "descr": "Gneiss"
+        }
+      },
+      "resume": "argile limoneuse sur gneiss — sèche vite"
+    },
+    {
+      "id": "alberes-laroque",
+      "nom": "Albères / col de l'Ouillat",
+      "zone": "Pyrénées-Orientales",
+      "lat": 42.4756,
+      "lon": 2.8878,
+      "note": "Hêtraie de crête, schistes du massif littoral",
+      "altitude": 469,
+      "pentePct": 31.2,
+      "exposition": 297,
+      "sol": {
+        "argile": 21.7,
+        "limon": 38.6,
+        "sable": 39.8,
+        "densite": 1.16,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Granites",
+        "type": "Roches Magmatiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1345,
+        "thetaFc": 0.2562,
+        "thetaSat": 0.5642,
+        "stockWp": 20.18,
+        "stockFc": 38.43,
+        "stockSat": 84.62,
+        "drainage": 0.7547,
+        "ruissellementBase": 0.2728,
+        "kcExposition": 0.9319,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "magmatique",
+          "facteur": 1.15,
+          "familles": [
+            "magmatique"
+          ],
+          "descr": "Granites"
+        }
+      },
+      "resume": "limon argilo-sableux sur granites — sèche très vite"
+    },
+    {
+      "id": "vallespir-ceret",
+      "nom": "Vallespir / Céret",
+      "zone": "Pyrénées-Orientales",
+      "lat": 42.46,
+      "lon": 2.73,
+      "note": "Vallée du Tech, versants boisés",
+      "altitude": 567,
+      "pentePct": 41.6,
+      "exposition": 65,
+      "sol": {
+        "argile": 22.4,
+        "limon": 40.7,
+        "sable": 37,
+        "densite": 1.12,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Gneiss",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1378,
+        "thetaFc": 0.2642,
+        "thetaSat": 0.5774,
+        "stockWp": 20.66,
+        "stockFc": 39.62,
+        "stockSat": 86.6,
+        "drainage": 0.7456,
+        "ruissellementBase": 0.3274,
+        "kcExposition": 0.9366,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "métamorphique",
+          "facteur": 1.1,
+          "familles": [
+            "métamorphique"
+          ],
+          "descr": "Gneiss"
+        }
+      },
+      "resume": "limon argilo-sableux sur gneiss — sèche très vite"
+    },
+    {
+      "id": "fenouilledes-sournia",
+      "nom": "Fenouillèdes / Sournia",
+      "zone": "Pyrénées-Orientales",
+      "lat": 42.7256,
+      "lon": 2.4083,
+      "note": "Plateau sec entre Corbières et Conflent",
+      "altitude": 624,
+      "pentePct": 21.3,
+      "exposition": 181,
+      "sol": {
+        "argile": 25,
+        "limon": 42.8,
+        "sable": 32.3,
+        "densite": 1.19,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Granites",
+        "type": "Roches Magmatiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1508,
+        "thetaFc": 0.2829,
+        "thetaSat": 0.5528,
+        "stockWp": 22.61,
+        "stockFc": 42.44,
+        "stockSat": 82.92,
+        "drainage": 0.6495,
+        "ruissellementBase": 0.2363,
+        "kcExposition": 1.1278,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "magmatique",
+          "facteur": 1.15,
+          "familles": [
+            "magmatique"
+          ],
+          "descr": "Granites"
+        }
+      },
+      "resume": "limon argilo-sableux sur granites — sèche vite"
+    },
+    {
+      "id": "forca-real",
+      "nom": "Força Réal",
+      "zone": "Pyrénées-Orientales",
+      "lat": 42.723,
+      "lon": 2.655,
+      "note": "Crête au-dessus de la plaine du Roussillon",
+      "altitude": 288,
+      "pentePct": 4.2,
+      "exposition": 54,
+      "sol": {
+        "argile": 25.5,
+        "limon": 34.7,
+        "sable": 39.9,
+        "densite": 1.35,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Gneiss",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1533,
+        "thetaFc": 0.2695,
+        "thetaSat": 0.4925,
+        "stockWp": 22.99,
+        "stockFc": 40.43,
+        "stockSat": 73.87,
+        "drainage": 0.5557,
+        "ruissellementBase": 0.1528,
+        "kcExposition": 0.9852,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "métamorphique",
+          "facteur": 1.1,
+          "familles": [
+            "métamorphique"
+          ],
+          "descr": "Gneiss"
+        }
+      },
+      "resume": "limon argilo-sableux sur gneiss — sèche vite"
+    },
+    {
+      "id": "conflent-villefranche",
+      "nom": "Conflent / Villefranche",
+      "zone": "Pyrénées-Orientales",
+      "lat": 42.5906,
+      "lon": 2.3672,
+      "note": "Gorges et soulanes du Conflent, très ensoleillé",
+      "altitude": 485,
+      "pentePct": 48,
+      "exposition": 90,
+      "sol": {
+        "argile": 25.7,
+        "limon": 44.3,
+        "sable": 30.1,
+        "densite": 1.23,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Grès",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1543,
+        "thetaFc": 0.2898,
+        "thetaSat": 0.534,
+        "stockWp": 23.14,
+        "stockFc": 43.48,
+        "stockSat": 80.09,
+        "drainage": 0.8198,
+        "ruissellementBase": 0.3726,
+        "kcExposition": 1,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "gréseux",
+          "facteur": 1.3,
+          "familles": [
+            "gréseux"
+          ],
+          "descr": "Grès"
+        }
+      },
+      "resume": "limon argilo-sableux sur grès — sèche très vite"
+    },
+    {
+      "id": "rocamadour-gramat",
+      "nom": "Rocamadour / causse de Gramat",
+      "zone": "Lot",
+      "lat": 44.81,
+      "lon": 1.64,
+      "note": "Karst franc, l'eau part aussitôt",
+      "altitude": 279,
+      "pentePct": 1.3,
+      "exposition": 267,
+      "sol": {
+        "argile": 26,
+        "limon": 45.9,
+        "sable": 28.1,
+        "densite": 1.38,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Calcaires, marnes et gypse",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.156,
+        "thetaFc": 0.295,
+        "thetaSat": 0.4811,
+        "stockWp": 23.4,
+        "stockFc": 44.25,
+        "stockSat": 72.17,
+        "drainage": 0.5,
+        "ruissellementBase": 0.1405,
+        "kcExposition": 1.0004,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "calcaire / marno-argileux",
+          "facteur": 1.025,
+          "familles": [
+            "calcaire",
+            "marno-argileux"
+          ],
+          "descr": "Calcaires, marnes et gypse"
+        }
+      },
+      "resume": "limon argilo-sableux sur calcaires, marnes et gypse — séchage moyen"
+    },
+    {
+      "id": "saint-cirq-lapopie",
+      "nom": "Saint-Cirq-Lapopie",
+      "zone": "Lot",
+      "lat": 44.48,
+      "lon": 1.68,
+      "note": "Falaises et causse au-dessus du Lot",
+      "altitude": 283,
+      "pentePct": 8.1,
+      "exposition": 87,
+      "sol": {
+        "argile": 31,
+        "limon": 47.4,
+        "sable": 21.6,
+        "densite": 1.32,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Argiles",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.181,
+        "thetaFc": 0.326,
+        "thetaSat": 0.5019,
+        "stockWp": 27.15,
+        "stockFc": 48.9,
+        "stockSat": 75.28,
+        "drainage": 0.2542,
+        "ruissellementBase": 0.1945,
+        "kcExposition": 0.9975,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "marno-argileux",
+          "facteur": 0.6,
+          "familles": [
+            "marno-argileux"
+          ],
+          "descr": "Argiles"
+        }
+      },
+      "resume": "argile limoneuse sur argiles — sèche lentement"
+    },
+    {
+      "id": "figeac-segala",
+      "nom": "Figeac / Ségala",
+      "zone": "Lot",
+      "lat": 44.65,
+      "lon": 2.09,
+      "note": "Schistes et arène, plus humide que le causse",
+      "altitude": 309,
+      "pentePct": 8.7,
+      "exposition": 197,
+      "sol": {
+        "argile": 31.9,
+        "limon": 34.8,
+        "sable": 33.3,
+        "densite": 1.31,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Schistes et grès",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1855,
+        "thetaFc": 0.3059,
+        "thetaSat": 0.5057,
+        "stockWp": 27.83,
+        "stockFc": 45.89,
+        "stockSat": 75.85,
+        "drainage": 0.4919,
+        "ruissellementBase": 0.2011,
+        "kcExposition": 1.0499,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "gréseux / métamorphique",
+          "facteur": 1.2000000000000002,
+          "familles": [
+            "gréseux",
+            "métamorphique"
+          ],
+          "descr": "Schistes et grès"
+        }
+      },
+      "resume": "argile limoneuse sur schistes et grès — séchage moyen"
+    },
+    {
+      "id": "cahors-mont-saint-cyr",
+      "nom": "Cahors / Mont Saint-Cyr",
+      "zone": "Lot",
+      "lat": 44.4356,
+      "lon": 1.46,
+      "note": "Coteaux au-dessus de Cahors, calcaire",
+      "altitude": 250,
+      "pentePct": 10.3,
+      "exposition": 353,
+      "sol": {
+        "argile": 29.7,
+        "limon": 46.9,
+        "sable": 23.5,
+        "densite": 1.29,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Calcaires, marnes et gypse",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1742,
+        "thetaFc": 0.3174,
+        "thetaSat": 0.5151,
+        "stockWp": 26.14,
+        "stockFc": 47.62,
+        "stockSat": 77.26,
+        "drainage": 0.4632,
+        "ruissellementBase": 0.2001,
+        "kcExposition": 0.9387,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "calcaire / marno-argileux",
+          "facteur": 1.025,
+          "familles": [
+            "calcaire",
+            "marno-argileux"
+          ],
+          "descr": "Calcaires, marnes et gypse"
+        }
+      },
+      "resume": "argile limoneuse sur calcaires, marnes et gypse — séchage moyen"
+    },
+    {
+      "id": "limogne-quercy",
+      "nom": "Causse de Limogne",
+      "zone": "Lot",
+      "lat": 44.3933,
+      "lon": 1.7686,
+      "note": "Causse aride, murets et chênes nains",
+      "altitude": 318,
+      "pentePct": 6.6,
+      "exposition": 52,
+      "sol": {
+        "argile": 32.1,
+        "limon": 49.2,
+        "sable": 18.8,
+        "densite": 1.41,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Calcaires, marnes et gypse",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1862,
+        "thetaFc": 0.3354,
+        "thetaSat": 0.4679,
+        "stockWp": 27.94,
+        "stockFc": 50.31,
+        "stockSat": 70.19,
+        "drainage": 0.4126,
+        "ruissellementBase": 0.1912,
+        "kcExposition": 0.9756,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "calcaire / marno-argileux",
+          "facteur": 1.025,
+          "familles": [
+            "calcaire",
+            "marno-argileux"
+          ],
+          "descr": "Calcaires, marnes et gypse"
+        }
+      },
+      "resume": "argile limoneuse sur calcaires, marnes et gypse — séchage moyen"
+    },
+    {
+      "id": "souillac-dordogne",
+      "nom": "Souillac / vallée de la Dordogne",
+      "zone": "Lot",
+      "lat": 44.8961,
+      "lon": 1.4744,
+      "note": "Fond de vallée alluvial et coteaux",
+      "altitude": 101,
+      "pentePct": 5.7,
+      "exposition": 105,
+      "sol": {
+        "argile": 32,
+        "limon": 40.1,
+        "sable": 28,
+        "densite": 1.33,
+        "echantillon": "couronne 600 m (2/4 points)"
+      },
+      "lithologie": {
+        "descr": "Calcaires, marnes et gypse",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1858,
+        "thetaFc": 0.3167,
+        "thetaSat": 0.4981,
+        "stockWp": 27.86,
+        "stockFc": 47.51,
+        "stockSat": 74.72,
+        "drainage": 0.4121,
+        "ruissellementBase": 0.1863,
+        "kcExposition": 1.0089,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "calcaire / marno-argileux",
+          "facteur": 1.025,
+          "familles": [
+            "calcaire",
+            "marno-argileux"
+          ],
+          "descr": "Calcaires, marnes et gypse"
+        }
+      },
+      "resume": "argile limoneuse sur calcaires, marnes et gypse — séchage moyen"
+    },
+    {
+      "id": "gourdon-bouriane",
+      "nom": "Gourdon / Bouriane",
+      "zone": "Lot",
+      "lat": 44.7369,
+      "lon": 1.3811,
+      "note": "Sables du Périgord, châtaigniers",
+      "altitude": 253,
+      "pentePct": 8,
+      "exposition": 269,
+      "sol": {
+        "argile": 28.6,
+        "limon": 40.6,
+        "sable": 30.9,
+        "densite": 1.4,
+        "echantillon": "couronne 600 m (2/4 points)"
+      },
+      "lithologie": {
+        "descr": "Calcaires, marnes et gypse",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1688,
+        "thetaFc": 0.2986,
+        "thetaSat": 0.4726,
+        "stockWp": 25.31,
+        "stockFc": 44.79,
+        "stockSat": 70.9,
+        "drainage": 0.4761,
+        "ruissellementBase": 0.1842,
+        "kcExposition": 1.0008,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "calcaire / marno-argileux",
+          "facteur": 1.025,
+          "familles": [
+            "calcaire",
+            "marno-argileux"
+          ],
+          "descr": "Calcaires, marnes et gypse"
+        }
+      },
+      "resume": "argile limoneuse sur calcaires, marnes et gypse — séchage moyen"
+    },
+    {
+      "id": "marcilhac-cele",
+      "nom": "Marcilhac / vallée du Célé",
+      "zone": "Lot",
+      "lat": 44.5578,
+      "lon": 1.7767,
+      "note": "Combes et corniches calcaires",
+      "altitude": 197,
+      "pentePct": 29,
+      "exposition": 4,
+      "sol": {
+        "argile": 34,
+        "limon": 43.3,
+        "sable": 22.8,
+        "densite": 1.23,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Calcaires, marnes et gypse",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1958,
+        "thetaFc": 0.3342,
+        "thetaSat": 0.534,
+        "stockWp": 29.36,
+        "stockFc": 50.13,
+        "stockSat": 80.09,
+        "drainage": 0.4294,
+        "ruissellementBase": 0.3108,
+        "kcExposition": 0.8504,
+        "texture": "argile limoneuse",
+        "litho": {
+          "classe": "calcaire / marno-argileux",
+          "facteur": 1.025,
+          "familles": [
+            "calcaire",
+            "marno-argileux"
+          ],
+          "descr": "Calcaires, marnes et gypse"
+        }
+      },
+      "resume": "argile limoneuse sur calcaires, marnes et gypse — séchage moyen"
+    },
+    {
+      "id": "risoul-guillestre",
+      "nom": "Risoul / Guillestre",
+      "zone": "Queyras",
+      "lat": 44.64,
+      "lon": 6.64,
+      "note": "Bike park et forêts de mélèzes au-dessus de Guillestre",
+      "altitude": 1288,
+      "pentePct": 35.9,
+      "exposition": 343,
+      "sol": {
+        "argile": 19.1,
+        "limon": 47.3,
+        "sable": 33.7,
+        "densite": 1.05,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Calcaires, marnes et gypse",
+        "type": "Roches Sédimentaires"
+      },
+      "hydro": {
+        "thetaWp": 0.1213,
+        "thetaFc": 0.2588,
+        "thetaSat": 0.6038,
+        "stockWp": 18.19,
+        "stockFc": 38.82,
+        "stockSat": 90.57,
+        "drainage": 0.7415,
+        "ruissellementBase": 0.2857,
+        "kcExposition": 0.8566,
+        "texture": "limon",
+        "litho": {
+          "classe": "calcaire / marno-argileux",
+          "facteur": 1.025,
+          "familles": [
+            "calcaire",
+            "marno-argileux"
+          ],
+          "descr": "Calcaires, marnes et gypse"
+        }
+      },
+      "resume": "limon sur calcaires, marnes et gypse — sèche très vite"
+    },
+    {
+      "id": "ceillac-melezet",
+      "nom": "Ceillac / Mélezet",
+      "zone": "Queyras",
+      "lat": 44.665,
+      "lon": 6.775,
+      "note": "Vallée du Mélezet, forêts et alpages",
+      "altitude": 1629,
+      "pentePct": 12.1,
+      "exposition": 15,
+      "sol": {
+        "argile": 19.6,
+        "limon": 40.5,
+        "sable": 40,
+        "densite": 1.17,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Schistes et grès",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.124,
+        "thetaFc": 0.2483,
+        "thetaSat": 0.5604,
+        "stockWp": 18.6,
+        "stockFc": 37.24,
+        "stockSat": 84.06,
+        "drainage": 0.7548,
+        "ruissellementBase": 0.1689,
+        "kcExposition": 0.9299,
+        "texture": "limon",
+        "litho": {
+          "classe": "gréseux / métamorphique",
+          "facteur": 1.2000000000000002,
+          "familles": [
+            "gréseux",
+            "métamorphique"
+          ],
+          "descr": "Schistes et grès"
+        }
+      },
+      "resume": "limon sur schistes et grès — sèche très vite"
+    },
+    {
+      "id": "chateau-queyras",
+      "nom": "Château-Queyras",
+      "zone": "Queyras",
+      "lat": 44.7644,
+      "lon": 6.7961,
+      "note": "Verrou central du Queyras, schistes lustrés",
+      "altitude": 1641,
+      "pentePct": 44.7,
+      "exposition": 151,
+      "sol": {
+        "argile": 19.2,
+        "limon": 41.1,
+        "sable": 39.8,
+        "densite": 1.07,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Schistes et grès",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1218,
+        "thetaFc": 0.2469,
+        "thetaSat": 0.5981,
+        "stockWp": 18.26,
+        "stockFc": 37.04,
+        "stockSat": 89.72,
+        "drainage": 0.9034,
+        "ruissellementBase": 0.3301,
+        "kcExposition": 1.1312,
+        "texture": "limon",
+        "litho": {
+          "classe": "gréseux / métamorphique",
+          "facteur": 1.2000000000000002,
+          "familles": [
+            "gréseux",
+            "métamorphique"
+          ],
+          "descr": "Schistes et grès"
+        }
+      },
+      "resume": "limon sur schistes et grès — sèche très vite"
+    },
+    {
+      "id": "arvieux-brunissard",
+      "nom": "Arvieux / Brunissard",
+      "zone": "Queyras",
+      "lat": 44.7628,
+      "lon": 6.7439,
+      "note": "Versants sous l'Izoard, terrain schisteux",
+      "altitude": 1547,
+      "pentePct": 27.3,
+      "exposition": 247,
+      "sol": {
+        "argile": 19.6,
+        "limon": 36.3,
+        "sable": 44.1,
+        "densite": 1.19,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Schistes et grès",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.124,
+        "thetaFc": 0.2401,
+        "thetaSat": 0.5528,
+        "stockWp": 18.6,
+        "stockFc": 36.01,
+        "stockSat": 82.92,
+        "drainage": 0.8189,
+        "ruissellementBase": 0.2449,
+        "kcExposition": 1.0586,
+        "texture": "limon",
+        "litho": {
+          "classe": "gréseux / métamorphique",
+          "facteur": 1.2000000000000002,
+          "familles": [
+            "gréseux",
+            "métamorphique"
+          ],
+          "descr": "Schistes et grès"
+        }
+      },
+      "resume": "limon sur schistes et grès — sèche très vite"
+    },
+    {
+      "id": "col-izoard",
+      "nom": "Col d'Izoard / Casse Déserte",
+      "zone": "Queyras",
+      "lat": 44.8203,
+      "lon": 6.7347,
+      "note": "Éboulis calcaires, très haute altitude",
+      "altitude": 2360,
+      "pentePct": 13,
+      "exposition": 353,
+      "sol": {
+        "argile": 20.7,
+        "limon": 37.8,
+        "sable": 41.5,
+        "densite": 1.08,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Schistes et grès",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1295,
+        "thetaFc": 0.2491,
+        "thetaSat": 0.5925,
+        "stockWp": 19.43,
+        "stockFc": 37.37,
+        "stockSat": 88.87,
+        "drainage": 0.7358,
+        "ruissellementBase": 0.1778,
+        "kcExposition": 0.9226,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "gréseux / métamorphique",
+          "facteur": 1.2000000000000002,
+          "familles": [
+            "gréseux",
+            "métamorphique"
+          ],
+          "descr": "Schistes et grès"
+        }
+      },
+      "resume": "limon argilo-sableux sur schistes et grès — sèche très vite"
+    },
+    {
+      "id": "molines-queyras",
+      "nom": "Molines-en-Queyras",
+      "zone": "Queyras",
+      "lat": 44.7297,
+      "lon": 6.8483,
+      "note": "Haute vallée de l'Aigue Agnelle",
+      "altitude": 1840,
+      "pentePct": 41.5,
+      "exposition": 237,
+      "sol": {
+        "argile": 21.2,
+        "limon": 40.8,
+        "sable": 38,
+        "densite": 1.14,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Ophiolites",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.132,
+        "thetaFc": 0.258,
+        "thetaSat": 0.5698,
+        "stockWp": 19.8,
+        "stockFc": 38.7,
+        "stockSat": 85.47,
+        "drainage": 0.7705,
+        "ruissellementBase": 0.3223,
+        "kcExposition": 1.0817,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "métamorphique",
+          "facteur": 1.1,
+          "familles": [
+            "métamorphique"
+          ],
+          "descr": "Ophiolites"
+        }
+      },
+      "resume": "limon argilo-sableux sur ophiolites — sèche très vite"
+    },
+    {
+      "id": "saint-veran",
+      "nom": "Saint-Véran",
+      "zone": "Queyras",
+      "lat": 44.7011,
+      "lon": 6.8697,
+      "note": "Plus haute commune d'Europe, alpages et mélèzes",
+      "altitude": 2085,
+      "pentePct": 32.8,
+      "exposition": 223,
+      "sol": {
+        "argile": 22.1,
+        "limon": 36.2,
+        "sable": 41.8,
+        "densite": 1.15,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Ophiolites",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1363,
+        "thetaFc": 0.2535,
+        "thetaSat": 0.5679,
+        "stockWp": 20.44,
+        "stockFc": 38.02,
+        "stockSat": 85.19,
+        "drainage": 0.7204,
+        "ruissellementBase": 0.2822,
+        "kcExposition": 1.1097,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "métamorphique",
+          "facteur": 1.1,
+          "familles": [
+            "métamorphique"
+          ],
+          "descr": "Ophiolites"
+        }
+      },
+      "resume": "limon argilo-sableux sur ophiolites — sèche très vite"
+    },
+    {
+      "id": "abries-ristolas",
+      "nom": "Abriès / Ristolas",
+      "zone": "Queyras",
+      "lat": 44.7981,
+      "lon": 6.9294,
+      "note": "Haut Guil, fond de vallée boisé",
+      "altitude": 1568,
+      "pentePct": 24,
+      "exposition": 290,
+      "sol": {
+        "argile": 20.5,
+        "limon": 41.5,
+        "sable": 38,
+        "densite": 1.1,
+        "echantillon": "point"
+      },
+      "lithologie": {
+        "descr": "Ophiolites",
+        "type": "Roches Métamorphiques"
+      },
+      "hydro": {
+        "thetaWp": 0.1288,
+        "thetaFc": 0.2556,
+        "thetaSat": 0.5849,
+        "stockWp": 19.31,
+        "stockFc": 38.34,
+        "stockSat": 87.74,
+        "drainage": 0.7188,
+        "ruissellementBase": 0.2322,
+        "kcExposition": 0.9507,
+        "texture": "limon argilo-sableux",
+        "litho": {
+          "classe": "métamorphique",
+          "facteur": 1.1,
+          "familles": [
+            "métamorphique"
+          ],
+          "descr": "Ophiolites"
+        }
+      },
+      "resume": "limon argilo-sableux sur ophiolites — sèche vite"
     }
   ]
 }

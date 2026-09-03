@@ -1,7 +1,12 @@
 # Météo Boue
 
-Prévision de l'état des sols pour le VTT, en Ariège, dans le piémont toulousain
-et dans les Hautes-Pyrénées (corridor Lourdes — pic du Midi de Bigorre).
+Prévision de l'état des sols pour le VTT. Huit zones : Ariège, piémont
+toulousain, Hautes-Pyrénées (corridor Lourdes — pic du Midi de Bigorre), Tarn,
+Aude, Pyrénées-Orientales, Lot et Queyras.
+
+Le Queyras est le seul massif hors Occitanie. À ~8 h de route de Toulouse, il
+sort de tous les paliers de trajet et n'apparaît que sous « Tout » — c'est une
+zone de séjour, pas de sortie du dimanche.
 
 Aucun service météo ne garde l'historique récent, et aucun ne dit si ça va être
 gras. Ce site croise **7 jours de météo passée et 7 jours à venir** avec la
@@ -13,12 +18,12 @@ L'idée de fond : une même pluie ne produit pas le même sentier selon le sol.
 
 ## Ce que ça donne
 
-Une grille **spots × jours** : 35 lignes, 15 colonnes (7 jours passés,
+Une grille **spots × jours** : 75 lignes, 15 colonnes (7 jours passés,
 aujourd'hui, 7 jours à venir). Une bande verte horizontale, c'est un spot
 fiable ; une colonne verte, c'est un bon jour. Les prévisions sont hachurées
 pour ne pas se confondre avec l'observé.
 
-Au-dessus, la réponse en une phrase : « 26 spots sur 35 sont roulants samedi.
+Au-dessus, la réponse en une phrase : « 54 spots sur 75 sont roulants samedi.
 Le plus proche : Bouconne (~30 min, grip parfait). À éviter : Nailloux,
 Pamiers. »
 
