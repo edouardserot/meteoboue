@@ -460,11 +460,14 @@ body {
   padding-bottom: 8px;
 }
 
+/* Les colonnes de jours sont posees par dessinerTableau : elles sont egales
+   sauf celle du jour choisi, elargie pour porter les mesures — sauf sur ecran
+   etroit, ou la media query plus bas les remet a egalite. */
 .tab__ligne {
   display: grid;
   grid-template-columns:
     var(--col-label)
-    repeat(var(--nb-jours, 15), minmax(0, 1fr))
+    var(--colonnes-jours, repeat(15, minmax(0, 1fr)))
     var(--col-etat);
   gap: 2px;
   padding: 0 8px;
@@ -666,10 +669,48 @@ body {
   font-size: 11px;
 }
 
-.vig__mm {
+/* Reservee a la colonne elargie : ailleurs il n'y a pas la place. */
+.vig__lecture {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.vig__lecture b {
   font-size: 9.5px;
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
+}
+
+.vig__lecture em {
+  font-size: 9px;
+  font-style: normal;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Sous cette largeur, elargir une colonne reviendrait a ramener les quatorze
+   autres sous vingt-cinq pixels : la grille entiere y perdrait plus que la
+   colonne du jour n'y gagnerait. Colonnes egales, donc, et la lecture chiffree
+   se replie sur le glyphe — la colonne « Etat » dit deja l'essentiel, et le
+   detail donne les mesures.
+
+   La regle porte sur .tab__ligne et non sur .tableau : la propriete y est
+   posee en style en ligne par dessinerTableau, qu'une feuille ne peut pas
+   contredire. Redefinie sur la ligne elle-meme, elle gagne. */
+@media (max-width: 1349px) {
+  .tab__ligne {
+    --colonnes-jours: repeat(var(--nb-jours, 15), minmax(0, 1fr));
+  }
+
+  .vig__lecture b,
+  .vig__lecture em {
+    display: none;
+  }
 }
 
 /* ------------------- Colonne « État » de la grille ----------------- */

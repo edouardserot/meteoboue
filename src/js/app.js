@@ -29,8 +29,17 @@ const COULEURS_TEXTURE = { argile: '#9a3412', limon: '#ca8a04', sable: '#fcd34d'
 
 /** Sous ce cumul, la bande de pluie ne se dessine pas : il n'a pas plu. */
 const SEUIL_EAU_MM = 0.5;
-/** Le chiffre, lui, attend le millimetre : « 0,5 » n'a jamais change un plan. */
-const SEUIL_CHIFFRE_MM = 1;
+/**
+ * Largeur de la colonne du jour choisi, en parts de colonne ordinaire. A 3 elle
+ * passe d'une trentaine de pixels a quatre-vingts : de quoi ecrire les mesures
+ * au lieu de les suggerer.
+ *
+ * Les quatorze autres paient la difference, une dizaine de pour cent de
+ * largeur. C'est tenable sur un grand ecran, pas en dessous de 1350 px ou
+ * elles descendraient sous 25 px : la feuille de style y rend les colonnes
+ * egales, et la lecture chiffree se replie sur le glyphe.
+ */
+const FACTEUR_JOUR_ACTIF = 3;
 /** Cumul a partir duquel la bande sature : au-dela, c'est deja « beaucoup ». */
 const EAU_SATURANTE_MM = 14;
 /** Bande de pluie : hauteur en px, du minimum visible au maximum. */
@@ -408,7 +417,7 @@ function eauDuJour(j) {
  * On lit alors une sequence et non plus un etat isole : « grosse bande mardi,
  * le niveau monte, il redescend a partir de jeudi ».
  */
-function marquesVignette(j, { glyphe = false, mm = false, pluie = true } = {}) {
+function marquesVignette(j, { glyphe = false, lecture = false, pluie = true } = {}) {
   const eau = eauDuJour(j);
   const marques = [];
 
@@ -427,15 +436,35 @@ function marquesVignette(j, { glyphe = false, mm = false, pluie = true } = {}) {
   const niveau = SOL_VIDE_PCT + ((SOL_PLEIN_PCT - SOL_VIDE_PCT) * j.indice) / 100;
   marques.push(`<i class="vig__sol" style="height:${niveau.toFixed(1)}%"></i>`);
 
-  // Le glyphe passe avant le chiffre : il porte une cause inattendue — gel,
-  // neige — et trente pixels de large ne tiennent pas les deux.
-  if (glyphe && j.etat.glyphe) {
+  if (lecture) {
+    marques.push(lectureVignette(j, eau));
+  } else if (glyphe && j.etat.glyphe) {
+    // Trente pixels de large ne tiennent qu'une marque : le glyphe, qui porte
+    // une cause inattendue — gel, neige — passe avant tout chiffre.
     marques.push(`<span class="vig__glyphe">${j.etat.glyphe}</span>`);
-  } else if (mm && eau >= SEUIL_CHIFFRE_MM) {
-    marques.push(`<span class="vig__mm">${echapper(formaterMm(eau))}</span>`);
   }
 
   return marques.join('');
+}
+
+/**
+ * Ce que la colonne du jour choisi ecrit, elle qui est deux fois et demie plus
+ * large que les autres. La colonne « Etat » dit deja l'etat en toutes lettres
+ * et le prochain creneau : restent les mesures, celles qu'on va chercher dans
+ * le detail alors qu'elles tiennent ici — l'eau tombee, puis les temperatures.
+ */
+function lectureVignette(j, eau) {
+  // Deux mesures, jamais trois : au-dela la ligne deborde des quatre-vingts
+  // pixels de la colonne. L'ordre dit la priorite — une cause inattendue,
+  // puis l'eau tombee, puis les temperatures si la place reste.
+  const mesures = [];
+  if (j.etat.glyphe) mesures.push(`<span class="vig__glyphe">${j.etat.glyphe}</span>`);
+  if (eau >= SEUIL_EAU_MM) mesures.push(`<b>${echapper(formaterMm(eau))} mm</b>`);
+  if (mesures.length < 2 && j.tmin !== null && j.tmax !== null) {
+    mesures.push(`<em>${Math.round(j.tmin)}/${Math.round(j.tmax)}°</em>`);
+  }
+
+  return mesures.length ? `<span class="vig__lecture">${mesures.join('')}</span>` : '';
 }
 
 /** « 0,8 » ou « 12 » : trois caracteres, c'est tout ce qui tient. */
@@ -452,7 +481,19 @@ function dessinerTableau() {
   const index = fenetre();
   const liste = spotsAffiches();
 
+  // Le jour choisi s'elargit sur place plutot que d'ouvrir un panneau : la
+  // comparaison avec les quatorze autres colonnes reste sous les yeux. En
+  // dessous de 1350 px la feuille de style annule cet elargissement, d'ou
+  // --nb-jours, qui lui sert alors a reformer des colonnes egales.
   conteneur.style.setProperty('--nb-jours', index.length);
+  conteneur.style.setProperty(
+    '--colonnes-jours',
+    index
+      .map((i) =>
+        i === etat.jourActif ? `minmax(0, ${FACTEUR_JOUR_ACTIF}fr)` : 'minmax(0, 1fr)'
+      )
+      .join(' ')
+  );
   conteneur.replaceChildren();
 
   // --- En-tete : les colonnes de jours servent de selecteur ---
@@ -513,9 +554,9 @@ function dessinerTableau() {
       c.style.background = couleurEtat(j.etat);
       c.title = `${spot.nom} — ${nomJour(i)} · ${infobulle(j, { date: false })}`;
       c.setAttribute('aria-label', c.title);
-      // Le chiffre ne sort que dans la colonne du jour choisi : c'est la seule
-      // ou l'on decide, et quinze colonnes chiffrees ne se scannent plus.
-      c.innerHTML = marquesVignette(j, { glyphe: true, mm: i === etat.jourActif });
+      // Les mesures ne sortent que dans la colonne du jour choisi : c'est la
+      // seule ou l'on decide, et quinze colonnes chiffrees ne se scannent plus.
+      c.innerHTML = marquesVignette(j, { glyphe: true, lecture: i === etat.jourActif });
       c.addEventListener('click', () => {
         choisirJour(i);
         selectionner(spot.id, { recentrer: true });
