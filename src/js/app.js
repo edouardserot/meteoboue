@@ -17,12 +17,31 @@ import {
   cumulPluie,
   couleurEtat,
   ETATS_ROULABLES,
+  RATIO_NEIGE,
 } from './mud-model.js';
 import { vitesseSechage } from './soil.js';
 import { meteoTousSpots, humiditeModele, JOURS_PASSES, JOURS_FUTURS } from './weather.js';
 
 const TOULOUSE = { lat: 43.6045, lon: 1.4442 };
 const COULEURS_TEXTURE = { argile: '#9a3412', limon: '#ca8a04', sable: '#fcd34d' };
+
+/* --- Vignettes ---------------------------------------------------- */
+
+/** Sous ce cumul, la bande de pluie ne se dessine pas : il n'a pas plu. */
+const SEUIL_EAU_MM = 0.5;
+/** Le chiffre, lui, attend le millimetre : « 0,5 » n'a jamais change un plan. */
+const SEUIL_CHIFFRE_MM = 1;
+/** Cumul a partir duquel la bande sature : au-dela, c'est deja « beaucoup ». */
+const EAU_SATURANTE_MM = 14;
+/** Bande de pluie : hauteur en px, du minimum visible au maximum. */
+const BANDE_PLUIE = { min: 2, max: 8 };
+/**
+ * Niveau d'eau du sol : part de la vignette occupee a vide, puis au plus.
+ * Le plancher n'est pas cosmetique — sans lui, un ete sec efface la marque
+ * partout et le lecteur ne sait plus si la jauge est vide ou absente.
+ */
+const SOL_VIDE_PCT = 7;
+const SOL_PLEIN_PCT = 55;
 
 /** Detour routier moyen par rapport a la distance a vol d'oiseau. */
 const FACTEUR_ROUTE = 1.3;
@@ -48,9 +67,9 @@ const etat = {
   trajetMax: '', // '' = sans limite, sinon un seuil en km a vol d'oiseau
   marqueurs: new Map(),
   carte: null,
-  // Telephone seulement : « liste », « grille » ou « carte ». Au-dessus de
-  // 900 px la grille et la carte tiennent cote a cote et l'attribut est sans
-  // effet. La liste est le defaut : c'est elle qui repond a « ou rouler ? ».
+  // Telephone seulement : « liste » ou « carte ». Au-dessus de 900 px la
+  // grille et la carte tiennent cote a cote et l'attribut est sans effet.
+  // La liste est le defaut : c'est elle qui repond a « ou rouler ? ».
   vue: 'liste',
 };
 
@@ -91,7 +110,6 @@ async function demarrer() {
   dessinerMarqueurs();
   dessinerVerdict();
   initialiserOnglets();
-  cadrerSurAujourdhui();
 
   // Les puces de zone et de trajet appellent filtrer() elles-memes : elles
   // changent la zone geographique regardee, et la carte suit.
@@ -364,6 +382,68 @@ function carteAEviter(aEviter) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Vignettes spot × jour                                               */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Eau tombee dans la journee, en mm. La neige compte pour son equivalent en
+ * eau, comme dans le bilan hydrique : sinon elle pesait moins lourd a l'ecran
+ * qu'elle ne charge le sol a la fonte.
+ */
+function eauDuJour(j) {
+  return j.pluie + j.neige / RATIO_NEIGE;
+}
+
+/**
+ * Ce qu'une vignette dit en plus de sa teinte.
+ *
+ * La teinte ne prend que huit valeurs, une par etat : une semaine de
+ * « parfait » donnait sept carres strictement identiques alors que le sol y
+ * passait de 15 a 43 d'indice de boue. Deux marques rendent ce relief, chacune
+ * sur son bord, et l'une explique l'autre :
+ *
+ *   en haut, l'eau tombee ce jour-la — bleue, blanche quand c'est de la neige
+ *   en bas, l'eau restee dans le sol — l'indice de boue, de 0 a 100
+ *
+ * On lit alors une sequence et non plus un etat isole : « grosse bande mardi,
+ * le niveau monte, il redescend a partir de jeudi ».
+ */
+function marquesVignette(j, { glyphe = false, mm = false, pluie = true } = {}) {
+  const eau = eauDuJour(j);
+  const marques = [];
+
+  if (pluie && eau >= SEUIL_EAU_MM) {
+    const part = Math.min(1, eau / EAU_SATURANTE_MM);
+    const hauteur = BANDE_PLUIE.min + (BANDE_PLUIE.max - BANDE_PLUIE.min) * part;
+    // La neige ne charge le sol qu'a la fonte : une autre couleur evite de
+    // lire « il a plu » un jour ou rien n'a coule.
+    const neigeuse = j.neige / RATIO_NEIGE > j.pluie;
+    marques.push(
+      `<i class="vig__pluie${neigeuse ? ' vig__pluie--neige' : ''}"` +
+        ` style="height:${hauteur.toFixed(1)}px"></i>`
+    );
+  }
+
+  const niveau = SOL_VIDE_PCT + ((SOL_PLEIN_PCT - SOL_VIDE_PCT) * j.indice) / 100;
+  marques.push(`<i class="vig__sol" style="height:${niveau.toFixed(1)}%"></i>`);
+
+  // Le glyphe passe avant le chiffre : il porte une cause inattendue — gel,
+  // neige — et trente pixels de large ne tiennent pas les deux.
+  if (glyphe && j.etat.glyphe) {
+    marques.push(`<span class="vig__glyphe">${j.etat.glyphe}</span>`);
+  } else if (mm && eau >= SEUIL_CHIFFRE_MM) {
+    marques.push(`<span class="vig__mm">${echapper(formaterMm(eau))}</span>`);
+  }
+
+  return marques.join('');
+}
+
+/** « 0,8 » ou « 12 » : trois caracteres, c'est tout ce qui tient. */
+function formaterMm(mm) {
+  return mm < 10 ? mm.toFixed(1).replace('.', ',') : String(Math.round(mm));
+}
+
+/* ------------------------------------------------------------------ */
 /* Grille spots x jours                                                */
 /* ------------------------------------------------------------------ */
 
@@ -431,10 +511,11 @@ function dessinerTableau() {
         (i === etat.jourActif ? ' tab__cellule--colonne' : '') +
         (i > etat.idxAuj ? ' tab__cellule--futur' : '');
       c.style.background = couleurEtat(j.etat);
-      c.title = `${spot.nom} — ${nomJour(i)} : ${j.etat.label}${j.pluie >= 0.5 ? `, ${j.pluie} mm de pluie` : ''}`;
-      if (j.etat.glyphe) {
-        c.innerHTML = `<span class="tab__glyphe">${j.etat.glyphe}</span>`;
-      }
+      c.title = `${spot.nom} — ${nomJour(i)} · ${infobulle(j, { date: false })}`;
+      c.setAttribute('aria-label', c.title);
+      // Le chiffre ne sort que dans la colonne du jour choisi : c'est la seule
+      // ou l'on decide, et quinze colonnes chiffrees ne se scannent plus.
+      c.innerHTML = marquesVignette(j, { glyphe: true, mm: i === etat.jourActif });
       c.addEventListener('click', () => {
         choisirJour(i);
         selectionner(spot.id, { recentrer: true });
@@ -534,9 +615,9 @@ function dessinerRail() {
 }
 
 /**
- * La meme information que la grille, mais lue ligne par ligne : le nom,
- * l'etat du jour choisi ecrit en toutes lettres, et la frise des 15 jours
- * qui garde l'intuition du tableau.
+ * La vue de reference sur telephone, ou la grille ne tient pas en largeur :
+ * la meme information lue ligne par ligne — le nom, l'etat du jour choisi
+ * ecrit en toutes lettres, et la frise des 15 jours, cliquable case par case.
  */
 function dessinerListe() {
   const conteneur = el('liste');
@@ -557,27 +638,46 @@ function dessinerListe() {
     const jour = jours[etat.jourActif];
     const couleur = couleurEtat(jour.etat);
 
-    const frise = index
-      .map((i) => {
-        const classes =
-          'spot__case' +
-          (i > etat.idxAuj ? ' spot__case--futur' : '') +
-          (i === etat.jourActif ? ' spot__case--actif' : '');
-        return `<i class="${classes}" style="background-color:${couleurEtat(jours[i].etat)}"></i>`;
-      })
-      .join('');
-
-    const ligne = document.createElement('button');
-    ligne.type = 'button';
+    const ligne = document.createElement('div');
     ligne.className = 'spot' + (spot.id === etat.selection ? ' spot--actif' : '');
-    ligne.innerHTML =
+
+    const infos = document.createElement('button');
+    infos.type = 'button';
+    infos.className = 'spot__infos';
+    infos.innerHTML =
       `<span class="spot__puce" style="background:${couleur}"></span>` +
       `<span class="spot__nom">${echapper(spot.nom)}</span>` +
       `<span class="spot__etat" style="color:${couleur}">${echapper(jour.etat.court)}</span>` +
       `<span class="spot__meta">${trajet(spot)} · ${spot.altitude ?? '?'} m</span>` +
-      `<span class="spot__note">${echapper(noteEtat(jours, etat.jourActif))}</span>` +
-      `<span class="spot__frise">${frise}</span>`;
-    ligne.addEventListener('click', () => selectionner(spot.id, { recentrer: false }));
+      `<span class="spot__note">${echapper(noteEtat(jours, etat.jourActif))}</span>`;
+    infos.addEventListener('click', () => selectionner(spot.id, { recentrer: false }));
+    ligne.append(infos);
+
+    // Chaque case de la frise est un jour : la rendre cliquable donne a la
+    // liste le geste de la grille — choisir un spot et un jour d'un coup.
+    const frise = document.createElement('span');
+    frise.className = 'spot__frise';
+    for (const i of index) {
+      const c = document.createElement('button');
+      c.type = 'button';
+      c.className =
+        'spot__case' +
+        (i > etat.idxAuj ? ' spot__case--futur' : '') +
+        (i === etat.jourActif ? ' spot__case--actif' : '');
+      c.style.backgroundColor = couleurEtat(jours[i].etat);
+      c.title = `${spot.nom} — ${nomJour(i)} · ${infobulle(jours[i], { date: false })}`;
+      c.setAttribute('aria-label', c.title);
+      // Onze pixels de haut : les deux bandes passent, pas le glyphe ni le
+      // chiffre — l'etat en toutes lettres est juste au-dessus, dans la ligne.
+      c.innerHTML = marquesVignette(jours[i]);
+      c.addEventListener('click', () => {
+        choisirJour(i);
+        selectionner(spot.id, { recentrer: false });
+      });
+      frise.append(c);
+    }
+    ligne.append(frise);
+
     conteneur.append(ligne);
   }
 }
@@ -601,33 +701,6 @@ function basculerVue(vue) {
 
   // MapLibre ne recalcule pas sa taille tant qu'il etait masque.
   if (vue === 'carte') etat.carte?.resize();
-  // Idem pour le cadrage de la grille : tant qu'elle est masquee elle ne
-  // deborde pas, donc il n'y a rien a cadrer. On le fait a son affichage.
-  if (vue === 'grille') cadrerSurAujourdhui();
-}
-
-/**
- * La grille deborde en largeur sur telephone. Sans ce cadrage elle s'ouvre
- * sur sept jours de meteo passee et il faut faire defiler vers la droite
- * pour atteindre aujourd'hui — l'inverse de ce qu'on vient y chercher.
- */
-function cadrerSurAujourdhui() {
-  // Une seule fois : ensuite la position de defilement appartient au lecteur.
-  if (etat.grilleCadree) return;
-
-  const conteneur = el('tableau');
-  // Masquee (vue Liste ou Carte) ou assez large : rien a cadrer.
-  if (conteneur.scrollWidth <= conteneur.clientWidth) return;
-
-  const entete = conteneur.firstElementChild;
-  const colonne = entete.children[1 + fenetre().indexOf(etat.idxAuj)];
-  if (!colonne) return;
-
-  conteneur.scrollLeft = Math.max(
-    0,
-    colonne.offsetLeft - entete.firstElementChild.offsetWidth - 12
-  );
-  etat.grilleCadree = true;
 }
 
 function choisirJour(i) {
@@ -765,7 +838,9 @@ function dessinerDetail(spot) {
           </div>
           <div class="jour__pluie"><div class="jour__pluie-barre" style="height:${hauteur}%"></div></div>
           <div class="jour__pluie-valeur">${precip >= 0.5 ? precip.toFixed(0) : ''}</div>
-          <div class="jour__etat" style="background:${couleurEtat(j.etat)}">${j.etat.glyphe ?? ''}</div>
+          <div class="jour__etat" style="background:${couleurEtat(j.etat)}">${
+            marquesVignette(j, { glyphe: true, pluie: false })
+          }</div>
         </div>`;
     })
     .join('');
@@ -919,8 +994,14 @@ function cumulPluieFuture(jours) {
   return Math.round(total * 10) / 10;
 }
 
-function infobulle(j) {
-  const morceaux = [j.date, j.etat.label, `indice ${j.indice}`, `pluie ${j.pluie} mm`];
+/**
+ * Le resume d'un jour en une ligne. Sans sa date quand l'appelant l'a deja
+ * dite — l'infobulle d'une vignette nomme le spot et le jour avant elle. Les
+ * deux marques de la vignette y sont nommees : l'eau tombee, l'eau du sol.
+ */
+function infobulle(j, { date = true } = {}) {
+  const morceaux = date ? [j.date] : [];
+  morceaux.push(j.etat.label, `${formaterMm(eauDuJour(j))} mm d’eau`, `sol ${j.indice}/100`);
   if (j.neige > 0) morceaux.push(`neige ${j.neige} cm`);
   if (j.tmin !== null && j.tmax !== null) {
     morceaux.push(`${Math.round(j.tmin)}/${Math.round(j.tmax)} °C`);

@@ -14,7 +14,7 @@ const FONTE_DEGRE_JOUR = 3.5;
 /** Coefficient cultural de base (sol nu a sous-bois). */
 const KC_BASE = 0.85;
 /** Open-Meteo convertit l'equivalent en eau en hauteur de neige au ratio 1:7. */
-const RATIO_NEIGE = 0.7;
+export const RATIO_NEIGE = 0.7;
 
 /**
  * Les etats du sol.

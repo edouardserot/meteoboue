@@ -397,6 +397,43 @@ body {
   );
 }
 
+/* Deux vignettes miniatures : la legende montre la marque au lieu de la
+   decrire, et tient dans la place que laisse la barre de filtres. */
+.legende__marque {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legende__vig {
+  position: relative;
+  width: 17px;
+  height: 15px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgb(126, 178, 54);
+}
+
+.legende__vig::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.legende__vig--pluie::before {
+  top: 0;
+  height: 5px;
+  background: rgba(56, 189, 248, 0.95);
+}
+
+.legende__vig--sol::before {
+  bottom: 0;
+  height: 8px;
+  background: rgba(6, 16, 26, 0.42);
+  border-top: 1px solid rgba(125, 211, 252, 0.3);
+}
+
 .legende__note {
   padding-left: 10px;
   border-left: 1px solid var(--bordure);
@@ -552,6 +589,8 @@ body {
 }
 
 .tab__cellule {
+  position: relative;
+  overflow: hidden;
   height: 27px;
   border: none;
   border-radius: 4px;
@@ -582,11 +621,55 @@ body {
   outline-offset: -1px;
 }
 
-.tab__glyphe {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+/* ---------------------- Marques d'une vignette -------------------- */
+
+/* La teinte ne prend que huit valeurs, une par etat : sept jours de
+   « parfait » donnaient sept carres identiques alors que le sol y passait de
+   15 a 43 d'indice de boue. Deux marques rendent ce relief sans toucher a la
+   teinte, qui reste la reponse a « j'y vais ? » : l'eau tombee se pose en
+   haut, l'eau restee dans le sol monte du bas. La cause au-dessus, l'etat en
+   dessous — une ligne de quinze vignettes se lit alors comme une sequence. */
+
+.vig__pluie {
+  position: absolute;
+  inset: 0 0 auto 0;
+  background: linear-gradient(rgba(56, 189, 248, 0.95), rgba(56, 189, 248, 0.45));
+  box-shadow: 0 1px 0 rgba(6, 16, 26, 0.3);
+}
+
+/* La neige tombe aussi, mais elle ne charge le sol qu'a la fonte : sans
+   couleur propre, on lisait « il a plu » un jour ou rien n'a coule. */
+.vig__pluie--neige {
+  background: linear-gradient(rgba(241, 245, 249, 0.95), rgba(241, 245, 249, 0.45));
+}
+
+/* Le liset bleu rattache la jauge a la bande du haut : la meme eau, tombee
+   puis retenue. Il rend aussi lisible la jauge vide, qui sans lui ressemblait
+   a une ombre portee. */
+.vig__sol {
+  position: absolute;
+  inset: auto 0 0 0;
+  background: rgba(6, 16, 26, 0.42);
+  border-top: 1px solid rgba(125, 211, 252, 0.3);
+}
+
+/* Sans position, un enfant non positionne passerait sous les deux bandes. */
+.vig__glyphe,
+.vig__mm {
+  position: relative;
   line-height: 1;
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.vig__glyphe {
+  font-size: 11px;
+}
+
+.vig__mm {
+  font-size: 9.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ------------------- Colonne « État » de la grille ----------------- */
@@ -717,17 +800,23 @@ body {
   background: var(--fond-2);
 }
 
+/* Deux zones cliquables distinctes — le bloc d'identite et les cases de la
+   frise — donc un conteneur neutre plutot qu'un bouton unique. */
 .spot {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(42, 54, 68, 0.6);
+}
+
+.spot__infos {
   display: grid;
   grid-template-columns: 10px minmax(0, 1fr) auto;
   column-gap: 10px;
   row-gap: 3px;
   align-items: center;
   width: 100%;
-  padding: 10px 12px;
+  padding: 0;
   background: none;
   border: none;
-  border-bottom: 1px solid rgba(42, 54, 68, 0.6);
   color: var(--texte);
   font: inherit;
   text-align: left;
@@ -781,18 +870,38 @@ body {
 
 /* La frise garde l'intuition de la grille dans une liste : on voit si le
    spot sort d'une semaine seche ou d'un deluge. */
+/* Sept pixels ne logeaient qu'une couleur ; onze logent les deux marques de
+   la vignette, et la frise raconte enfin d'ou vient l'etat du jour. */
 .spot__frise {
-  grid-column: 1 / -1;
-  grid-row: 3;
   display: flex;
   gap: 1.5px;
-  height: 7px;
-  margin-top: 4px;
+  height: 11px;
+  margin-top: 5px;
 }
 
 .spot__case {
+  position: relative;
   flex: 1 1 0;
+  min-width: 0;
+  padding: 0;
+  border: none;
   border-radius: 1px;
+  cursor: pointer;
+}
+
+/* Onze pixels de haut ne s'attrapent pas au doigt : la cible deborde dans
+   la marge et dans le rembourrage de la ligne, sans rien deplacer. Elle
+   garde ses vingt pixels, la vignette ayant pris les quatre du milieu. */
+.spot__case::after {
+  content: '';
+  position: absolute;
+  inset: -2px 0 -7px;
+}
+
+/* Onze pixels : la bande de pluie doit ceder la place a la teinte, sinon un
+   gros cumul repeint la vignette en bleu et l'etat du jour disparait. */
+.spot__case .vig__pluie {
+  max-height: 4px;
 }
 
 .spot__case--futur {
@@ -1028,6 +1137,8 @@ body {
 }
 
 .jour__etat {
+  position: relative;
+  overflow: hidden;
   height: 30px;
   border-radius: 4px;
   display: flex;
@@ -1164,8 +1275,14 @@ body {
 
 /* La barre de filtres tient sur une ligne tant que la légende lui laisse la
    place : on lui retire d'abord sa note, puis la légende entière. */
-@media (max-width: 1500px) {
+@media (max-width: 1650px) {
   .legende__note {
+    display: none;
+  }
+}
+
+@media (max-width: 1500px) {
+  .legende__marque {
     display: none;
   }
 }
@@ -1190,14 +1307,17 @@ body {
     display: flex;
   }
 
+  /* Quinze colonnes plus la colonne « État » demandent 740 px : la grille
+     ne tient pas ici, et la liste porte deja la meme information. */
+  .tableau {
+    display: none;
+  }
+
   body[data-vue='liste'] .liste {
     display: block;
   }
 
-  body[data-vue='liste'] .tableau,
-  body[data-vue='liste'] .zone-carte,
-  body[data-vue='grille'] .zone-carte,
-  body[data-vue='carte'] .tableau {
+  body[data-vue='liste'] .zone-carte {
     display: none;
   }
 
@@ -1252,18 +1372,6 @@ body {
     height: 40px;
     padding: 0 14px;
     font-size: 13px;
-  }
-
-  .tableau {
-    border-right: none;
-    border-bottom: 1px solid var(--bordure);
-  }
-
-  /* Quinze colonnes plus la colonne « État » ne tiennent pas en largeur de
-     téléphone : on fait défiler horizontalement, la colonne des noms
-     restant collée à gauche. */
-  .tab__ligne {
-    min-width: 740px;
   }
 
   .entete__titre p,
